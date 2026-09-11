@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>IBM Team Outing Planner</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;background:#f0f2f5;color:#1f2328;min-height:100vh}
+.header{background:#161616;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.header h1{font-size:17px;font-weight:700}
+.header-sub{font-size:11px;color:#8d8d8d;margin-top:2px}
+.stats-row{display:flex;gap:18px;flex-wrap:wrap}
+.stat{text-align:center}.stat-val{font-size:20px;font-weight:700;color:#78a9ff}.stat-lbl{font-size:10px;color:#8d8d8d;margin-top:1px}
+.tabs{display:flex;background:#262626;border-bottom:2px solid #393939}
+.tab-btn{padding:12px 26px;font-size:13px;font-weight:600;color:#8d8d8d;border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.15s}
+.tab-btn.active{color:#fff;border-bottom-color:#78a9ff}
+.tab-btn:hover:not(.active){color:#c6c6c6}
+.panel{display:none;padding:20px 24px}.panel.active{display:block}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:20px}
+.section-head h2{font-size:14px;font-weight:700}
+.pill{font-size:11px;background:#393939;color:#c6c6c6;border-radius:20px;padding:2px 10px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;padding:10px 16px;background:#fff;border:1px solid #e5e7eb;border-radius:8px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#444}
+.leg-dot{width:9px;height:9px;border-radius:50%}
+.vehicle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px}
+.v-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.v-card-head{padding:11px 14px;display:flex;align-items:center;gap:10px}
+.v-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.v-title{font-size:13px;font-weight:700}.v-sub{font-size:11px;color:#57606a;margin-top:1px}
+.v-seats{margin-left:auto;text-align:right}.seat-count{font-size:17px;font-weight:700}.seat-lbl{font-size:10px;color:#57606a}
+.seat-bar{display:flex;gap:3px;margin-top:3px}
+.sq{width:9px;height:9px;border-radius:2px}
+.v-drop{min-height:56px;padding:8px;border-top:1px solid #f3f4f6;display:flex;flex-direction:column;gap:5px}
+.pool-card{background:#fff;border:2px dashed #d1d5db;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.pool-head{padding:10px 16px;background:#fafafa;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px}
+.pool-drop{padding:10px;display:flex;flex-wrap:wrap;gap:6px;min-height:46px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px 4px 5px;border-radius:20px;border:1px solid #e5e7eb;background:#fff;white-space:nowrap;font-size:12px;cursor:default}
+.chip-av{width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:#fff;flex-shrink:0}
+.chip-name{font-weight:600;color:#1f2328}
+.food-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.stay-badge{font-size:10px;padding:1px 6px;border-radius:7px}
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:14px}
+.room-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.room-head{padding:11px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f3f4f6}
+.room-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.room-title{font-size:13px;font-weight:700}.room-sub{font-size:11px;color:#57606a;margin-top:1px}
+.room-capacity{margin-left:auto;text-align:right}
+.room-drop{min-height:56px;padding:8px;display:flex;flex-direction:column;gap:5px}
+.p-row{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:6px;border:1px solid #f3f4f6;background:#fff}
+.p-av{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0}
+.p-name{font-weight:600;font-size:12.5px;flex:1}.p-loc{font-size:11px;color:#57606a}
+.food-tag{font-size:10px;padding:2px 8px;border-radius:9px;font-weight:600}
+.food-tag.veg{background:#dcfce7;color:#166534}.food-tag.nonveg{background:#fee2e2;color:#991b1b}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+.s-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:14px;text-align:center}
+.s-val{font-size:26px;font-weight:700}.s-lbl{font-size:11px;color:#57606a;margin-top:3px}
+.s-card.blue{border-top:3px solid #3b82d4}.s-card.green{border-top:3px solid #22c55e}
+.s-card.purple{border-top:3px solid #7c5cd8}.s-card.orange{border-top:3px solid #f59e0b}.s-card.red{border-top:3px solid #ef4444}
+.people-table{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden}
+.people-table table{width:100%;border-collapse:collapse}
+.people-table th{text-align:left;font-size:11px;font-weight:700;color:#57606a;text-transform:uppercase;letter-spacing:.5px;padding:9px 13px;border-bottom:1px solid #e5e7eb;background:#fafafa}
+.people-table td{padding:8px 13px;border-bottom:1px solid #f3f4f6;font-size:12px;vertical-align:middle}
+.people-table tr:last-child td{border-bottom:none}.people-table tr:hover td{background:#fafbfc}
+.info-banner{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#1e40af;display:flex;gap:9px}
+.driver-badge{font-size:10px;padding:1px 6px;border-radius:6px;color:#fff;font-weight:600}
+/* loading / error */
+.loader{display:flex;align-items:center;justify-content:center;padding:60px;flex-direction:column;gap:12px;color:#57606a}
+.spinner{width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#3b82d4;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.save-ts{font-size:11px;color:#6b7280}
+.refresh-btn{padding:5px 14px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:12px;cursor:pointer;color:#1f2328;transition:.15s}
+.refresh-btn:hover{background:#f0f2f5}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🏕️ IBM Team Outing – Travel &amp; Room Planner</h1>
+    <div class="header-sub" id="hdr-sub">Loading latest plan…</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-val">31</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-val">26</div><div class="stat-lbl">Overnight</div></div>
+      <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Day Trip</div></div>
+      <div class="stat"><div class="stat-val">7</div><div class="stat-lbl">🥗 Veg</div></div>
+      <div class="stat"><div class="stat-val">24</div><div class="stat-lbl">🍗 Non-Veg</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+      <span style="background:#393939;color:#8d8d8d;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700">👁 View Only</span>
+      <button class="refresh-btn" onclick="init()">🔄 Refresh</button>
+      <div class="save-ts" id="save-ts"></div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('travel',this)">🚗 Travel Plan</button>
+  <button class="tab-btn" onclick="showTab('rooms',this)">🛏️ Room Allotment</button>
+  <button class="tab-btn" onclick="showTab('summary',this)">📊 Full Summary</button>
+</div>
+
+<!-- TRAVEL -->
+<div id="tab-travel" class="panel active">
+  <div class="info-banner">👁 <span>View-only mode — contact the admin to request changes.</span></div>
+  <div class="legend">
+    <div class="legend-item"><div class="leg-dot" style="background:#22c55e"></div>Veg</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#ef4444"></div>Non-Veg</div>
+    <div class="legend-item"><span style="background:#dbeafe;color:#1e40af;font-size:11px;padding:1px 8px;border-radius:7px;font-weight:600">Overnight</span></div>
+    <div class="legend-item"><span style="background:#fef9c3;color:#854d0e;font-size:11px;padding:1px 8px;border-radius:7px;font-weight:600">Day</span></div>
+    <div class="legend-item"><span style="background:#3b82d4;color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;font-weight:600">Driver</span> = car owner</div>
+  </div>
+  <div class="pool-card" id="pool-wrap" style="display:none">
+    <div class="pool-head">🔄 Unassigned &nbsp;<span id="pool-count" style="background:#fee2e2;color:#991b1b;border-radius:12px;padding:2px 9px;font-size:11px;font-weight:600"></span></div>
+    <div class="pool-drop" id="pool"></div>
+  </div>
+  <div class="section-head"><h2>🚗 Car Vehicles</h2></div>
+  <div class="vehicle-grid" id="car-grid"></div>
+  <div class="section-head" style="margin-top:22px"><h2>🏍️ Bike Riders — travelling independently</h2></div>
+  <div id="bike-list" style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:7px"></div>
+</div>
+
+<!-- ROOMS -->
+<div id="tab-rooms" class="panel">
+  <div class="info-banner">👁 <span>View-only mode — room allocation set by admin.</span></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;flex:1;min-width:180px">
+      <div style="width:32px;height:32px;border-radius:7px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:17px">👑</div>
+      <div><div style="font-weight:700;font-size:13px">Premium Room</div><div style="font-size:11px;color:#57606a">6 rooms · King + extra bed · 3 pax each</div></div>
+      <div style="margin-left:auto;text-align:right"><div style="font-size:18px;font-weight:700;color:#7c5cd8">18</div><div style="font-size:10px;color:#57606a">total pax</div></div>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;flex:1;min-width:180px">
+      <div style="width:32px;height:32px;border-radius:7px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:17px">🏡</div>
+      <div><div style="font-weight:700;font-size:13px">Deluxe Cottage</div><div style="font-size:11px;color:#57606a">2 rooms · King + sofa · 4 pax each · Non-AC</div></div>
+      <div style="margin-left:auto;text-align:right"><div style="font-size:18px;font-weight:700;color:#3b82d4">8</div><div style="font-size:10px;color:#57606a">total pax</div></div>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;flex:1;min-width:180px">
+      <div style="width:32px;height:32px;border-radius:7px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:17px">🏕️</div>
+      <div><div style="font-weight:700;font-size:13px">2-Bedroom Villa</div><div style="font-size:11px;color:#57606a">1 villa · King + extra bed · 6 pax</div></div>
+      <div style="margin-left:auto;text-align:right"><div style="font-size:18px;font-weight:700;color:#22c55e">6</div><div style="font-size:10px;color:#57606a">total pax</div></div>
+    </div>
+  </div>
+  <div class="section-head"><h2>🛏️ Room Allocation — 9 rooms · 32 capacity</h2></div>
+  <div class="room-grid" id="room-grid"></div>
+  <div class="section-head" style="margin-top:22px"><h2>☀️ Day Trip (No Room Needed)</h2></div>
+  <div class="pool-card"><div class="pool-drop" id="daytrip-pool" style="flex-direction:column;gap:5px"></div></div>
+</div>
+
+<!-- SUMMARY -->
+<div id="tab-summary" class="panel">
+  <div class="summary-grid">
+    <div class="s-card blue"><div class="s-val">31</div><div class="s-lbl">Total Attendees</div></div>
+    <div class="s-card green"><div class="s-val">26</div><div class="s-lbl">Overnight</div></div>
+    <div class="s-card orange"><div class="s-val">5</div><div class="s-lbl">Day Trip</div></div>
+    <div class="s-card purple"><div class="s-val">7</div><div class="s-lbl">🥗 Veg</div></div>
+    <div class="s-card red"><div class="s-val">24</div><div class="s-lbl">🍗 Non-Veg</div></div>
+    <div class="s-card blue"><div class="s-val">5</div><div class="s-lbl">Cars (rides)</div></div>
+    <div class="s-card orange"><div class="s-val">10</div><div class="s-lbl">Bike Riders</div></div>
+    <div class="s-card green"><div class="s-val">15</div><div class="s-lbl">Need Carpool</div></div>
+    <div class="s-card purple"><div class="s-val">17</div><div class="s-lbl">Car Seats Available</div></div>
+  </div>
+  <div class="section-head"><h2>👥 All 31 Team Members</h2></div>
+  <div class="people-table">
+    <table><thead><tr><th>#</th><th>Name</th><th>Location</th><th>Travel</th><th>Stay</th><th>Food</th></tr></thead>
+    <tbody id="people-tbody"></tbody></table>
+  </div>
+</div>
+
+<div style="text-align:center;font-size:12px;color:#9ca3af;padding:20px;border-top:1px solid #e5e7eb;margin-top:16px">
+  Made with IBM Bob &nbsp;·&nbsp; <a href="https://github.com/vinay-kumarls-IBM/teamOutingPLanner" style="color:#9ca3af">GitHub</a>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────
+const PEOPLE = [
+  {id:1, name:"Kshitij Kaithal",           loc:"Bellandur",                      travel:"Bike",        stay:"Day",      food:"Veg"},
+  {id:2, name:"Saurabh Kumar",              loc:"BTM",                            travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:3, name:"Kalyani Geetha Unni",        loc:"Sarjapur Road",                  travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:4, name:"Ashish Chandra K",           loc:"KR Garden / Murugeshpalya",      travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:5, name:"Vinay Kumar L S",            loc:"Attiguppe Metro",                travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:6, name:"Prasanth Kumar P",           loc:"Bangalore (Central)",            travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:7, name:"Subhasish Dey",              loc:"Electronic City",                travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+  {id:8, name:"Baijnath Kumar",             loc:"Balagere Road",                  travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:9, name:"Giridhar Panuganti",         loc:"HSR Layout",                     travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:10,name:"Kolli Srinivas",             loc:"Sarjapur",                       travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:11,name:"Veer M",                     loc:"Chandapur",                      travel:"Bike",        stay:"Overnight",food:"Veg"},
+  {id:12,name:"Saurabh Kushwaha",           loc:"—",                              travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:13,name:"Vinay Punnoose",             loc:"Sarjapur",                       travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+  {id:14,name:"Chirag Agarwal",             loc:"Murugeshpalaya / HAL",           travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:15,name:"Amit Bevinakatti",           loc:"Kumbalgodu / Mysuru Rd",         travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:16,name:"Rakesh Mandala",             loc:"Kundalahalli",                   travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:17,name:"Vikneshwar Anandan",         loc:"Munnekollal",                    travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:18,name:"Arnab Ghosh",                loc:"Marathahalli",                   travel:"Bike",        stay:"Day",      food:"Non Veg"},
+  {id:19,name:"Aditya Saurabh",             loc:"Near IIM",                       travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:20,name:"Sri Anjaneyulu Uppalapati",  loc:"AET Jn / Embassy Tech Village",  travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:21,name:"Ganga Raghu",                loc:"AECS Layout / Brookfield",       travel:"Carpool",     stay:"Day",      food:"Veg"},
+  {id:22,name:"Ranjit Dash",                loc:"Kodathi",                        travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+  {id:23,name:"Pazhani T",                  loc:"Mahadevapura",                   travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:24,name:"Thasmiya Nazaneen P",        loc:"—",                              travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:25,name:"Bhaskar Bhattarai",          loc:"Prestige City / Sarjapur Rd",    travel:"Car (own)",   stay:"Overnight",food:"Non Veg"},
+  {id:26,name:"Biswajit Bhuyan",            loc:"Electronic City Phase 1",        travel:"Car (Driver)",stay:"Day",      food:"Non Veg"},
+  {id:27,name:"Satheesh K Dominic",         loc:"Carmelaram Railway Stn",         travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+  {id:28,name:"Natarajan Saravanan",        loc:"AECS Layout / Marathahalli",     travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:29,name:"Santhosh N R",               loc:"Marathahalli",                   travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:30,name:"Shruthi Poldas",             loc:"Sarjapur",                       travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:31,name:"Venktesh Kumar",             loc:"Munnekolala",                    travel:"Bike",        stay:"Day",      food:"Non Veg"},
+];
+
+const CARS = [
+  {id:"car1",driver:7, label:"Subhasish Dey",      emoji:"🚗",color:"#3b82d4",bg:"#dbeafe",totalSeats:5,zone:"Electronic City / South"},
+  {id:"car2",driver:13,label:"Vinay Punnoose",      emoji:"🚗",color:"#7c5cd8",bg:"#ede9fe",totalSeats:4,zone:"Sarjapur / SE Corridor"},
+  {id:"car3",driver:22,label:"Ranjit Dash",         emoji:"🚙",color:"#f59e0b",bg:"#fef3c7",totalSeats:2,zone:"Kodathi / Carmelaram"},
+  {id:"car4",driver:26,label:"Biswajit Bhuyan",     emoji:"🚙",color:"#22c55e",bg:"#dcfce7",totalSeats:3,zone:"Electronic City Ph1 (Day)"},
+  {id:"car5",driver:27,label:"Satheesh K Dominic",  emoji:"🚐",color:"#ef4444",bg:"#fee2e2",totalSeats:3,zone:"Carmelaram / East Bangalore"},
+];
+
+const ROOM_TYPES = [
+  {type:"premium",label:"Premium Room",   emoji:"👑",color:"#7c5cd8",bg:"#ede9fe",capacity:3,extra:"Extra bed available",count:6},
+  {type:"deluxe", label:"Deluxe Cottage", emoji:"🏡",color:"#3b82d4",bg:"#dbeafe",capacity:4,extra:"Sofa · Non-AC rest area",count:2},
+  {type:"villa",  label:"2-Bedroom Villa",emoji:"🏕️",color:"#22c55e",bg:"#dcfce7",capacity:6,extra:"Extra bed available",count:1},
+];
+const ROOMS=[];
+for(const rt of ROOM_TYPES) for(let i=1;i<=rt.count;i++) ROOMS.push({id:`${rt.type}${i}`,label:`${rt.label} ${i}`,emoji:rt.emoji,color:rt.color,bg:rt.bg,capacity:rt.capacity,note:rt.extra,type:rt.type});
+
+// ── HELPERS ──────────────────────────────────────────────────
+const ACOLORS=["#3b82f6","#7c5cd8","#22c55e","#f59e0b","#ef4444","#14b8a6","#8b5cf6","#f97316","#06b6d4","#ec4899","#64748b","#a16207"];
+const byId=id=>PEOPLE.find(p=>p.id===id);
+const initials=n=>n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+const acol=id=>ACOLORS[id%ACOLORS.length];
+
+let carState={}, roomState={};
+
+// ── CHIP (view-only) ─────────────────────────────────────────
+function makeChip(person, isDriver, driverColor){
+  const div=document.createElement('div');
+  div.className='chip';
+  if(isDriver){div.style.borderColor=driverColor;div.style.background='#f8f9ff';}
+  const fc=person.food==='Veg'?'#22c55e':'#ef4444';
+  const sb=person.stay==='Overnight'?'background:#dbeafe;color:#1e40af':'background:#fef9c3;color:#854d0e';
+  div.innerHTML=`<div class="chip-av" style="background:${acol(person.id)}">${initials(person.name)}</div>`+
+    `<span class="chip-name">${person.name.split(' ')[0]}</span>`+
+    `<div class="food-dot" style="background:${fc}" title="${person.food}"></div>`+
+    `<span class="stay-badge" style="${sb}">${person.stay==='Overnight'?'🌙':'☀️'}</span>`+
+    (isDriver?`<span class="driver-badge" style="background:${driverColor};font-size:10px;padding:1px 6px;border-radius:6px;color:#fff;font-weight:600">Driver</span>`:'');
+  div.title=`${person.name} | ${person.loc} | ${person.food}`;
+  return div;
+}
+
+function makeRow(person){
+  const div=document.createElement('div');
+  div.className='p-row';
+  div.innerHTML=`<div class="p-av" style="background:${acol(person.id)}">${initials(person.name)}</div>`+
+    `<div style="flex:1;min-width:0"><div class="p-name">${person.name}</div><div class="p-loc">${person.loc}</div></div>`+
+    `<span class="food-tag ${person.food==='Veg'?'veg':'nonveg'}">${person.food}</span>`;
+  return div;
+}
+
+function seatBar(used,total,color){
+  let h='<div class="seat-bar">';
+  for(let i=0;i<total;i++) h+=`<div class="sq" style="background:${i<used?color:'#e5e7eb'}"></div>`;
+  return h+'</div>';
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function render(){
+  renderTravel(); renderRooms(); renderSummaryTable();
+}
+
+function renderTravel(){
+  const poolIds=carState.pool||[];
+  const poolWrap=document.getElementById('pool-wrap');
+  poolWrap.style.display=poolIds.length?'':'none';
+  if(poolIds.length){
+    const pool=document.getElementById('pool'); pool.innerHTML='';
+    document.getElementById('pool-count').textContent=poolIds.length+' unassigned';
+    poolIds.forEach(pid=>{const p=byId(pid);if(p)pool.appendChild(makeChip(p,false,''));});
+  }
+
+  const grid=document.getElementById('car-grid'); grid.innerHTML='';
+  for(const car of CARS){
+    const occ=carState[car.id]||[], used=occ.length, total=car.totalSeats+1, free=Math.max(0,total-used);
+    const card=document.createElement('div'); card.className='v-card';
+    card.innerHTML=`<div class="v-card-head" style="background:${car.bg}">
+      <div class="v-icon" style="background:${car.color}">${car.emoji}</div>
+      <div><div class="v-title">${car.label}</div><div class="v-sub">${car.zone}</div></div>
+      <div class="v-seats"><div class="seat-count" style="color:${car.color}">${used}/${total}</div><div class="seat-lbl">${free} seat${free!==1?'s':''} free</div>${seatBar(used,total,car.color)}</div>
+    </div><div class="v-drop" id="${car.id}"></div>`;
+    grid.appendChild(card);
+    const drop=card.querySelector('.v-drop');
+    occ.forEach(pid=>{const p=byId(pid);if(p)drop.appendChild(makeChip(p,pid===car.driver,car.color));});
+  }
+
+  const bl=document.getElementById('bike-list'); bl.innerHTML='';
+  PEOPLE.filter(p=>p.travel==='Bike').forEach(p=>bl.appendChild(makeChip(p,false,'')));
+}
+
+function renderRooms(){
+  const grid=document.getElementById('room-grid'); grid.innerHTML='';
+  for(const room of ROOMS){
+    const occ=roomState[room.id]||[], used=occ.length, total=room.capacity, free=Math.max(0,total-used);
+    const card=document.createElement('div'); card.className='room-card';
+    card.innerHTML=`<div class="room-head" style="background:${room.bg}">
+      <div class="room-icon" style="background:${room.color}">${room.emoji}</div>
+      <div><div class="room-title">${room.label}</div><div class="room-sub">${room.note}</div></div>
+      <div class="room-capacity"><div class="seat-count" style="color:${room.color}">${used}/${total}</div><div class="seat-lbl">${free} bed${free!==1?'s':''} free</div>${seatBar(used,total,room.color)}</div>
+    </div><div class="room-drop" id="${room.id}"></div>`;
+    grid.appendChild(card);
+    const drop=card.querySelector('.room-drop');
+    occ.forEach(pid=>{const p=byId(pid);if(p)drop.appendChild(makeRow(p));});
+  }
+  const dp=document.getElementById('daytrip-pool'); dp.innerHTML='';
+  (roomState['daytrip-pool']||[]).forEach(pid=>{const p=byId(pid);if(p)dp.appendChild(makeRow(p));});
+}
+
+function renderSummaryTable(){
+  const tb=document.getElementById('people-tbody'); tb.innerHTML='';
+  const emoji={Bike:'🏍️','Car (Driver)':'🚗','Car (own)':'🚗',Carpool:'🤝'};
+  for(const p of PEOPLE){
+    const tr=document.createElement('tr');
+    const sc=p.stay==='Overnight'?'background:#dbeafe;color:#1e40af':'background:#fef9c3;color:#854d0e';
+    tr.innerHTML=`<td><div style="width:22px;height:22px;border-radius:50%;background:${acol(p.id)};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">${initials(p.name)}</div></td>`+
+      `<td style="font-weight:600">${p.name}</td><td style="color:#57606a;font-size:11px">${p.loc}</td>`+
+      `<td>${emoji[p.travel]||'🚗'} ${p.travel}</td>`+
+      `<td><span style="${sc};border-radius:9px;padding:2px 8px;font-size:11px;font-weight:600">${p.stay}</span></td>`+
+      `<td><span class="food-tag ${p.food==='Veg'?'veg':'nonveg'}">${p.food}</span></td>`;
+    tb.appendChild(tr);
+  }
+}
+
+function showTab(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FETCH PLAN FROM GITHUB RAW ───────────────────────────────
+// plan.json is a public file in the same repo — no token needed
+const PLAN_URL = 'https://raw.githubusercontent.com/vinay-kumarls-IBM/teamOutingPLanner/main/plan.json';
+
+async function init(){
+  document.getElementById('hdr-sub').textContent = '🔄 Loading latest plan…';
+  document.getElementById('save-ts').textContent = '';
+  try {
+    // Cache-bust so viewers always get the freshest version
+    const res = await fetch(PLAN_URL + '?t=' + Date.now());
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    carState  = data.car  || {};
+    roomState = data.room || {};
+    const ts = data.savedAt ? new Date(data.savedAt).toLocaleString() : '—';
+    document.getElementById('hdr-sub').textContent  = '👁 View-only — plan loaded from GitHub';
+    document.getElementById('save-ts').textContent  = 'Last updated: ' + ts;
+    render();
+  } catch(e){
+    document.getElementById('hdr-sub').textContent = '⚠️ Could not load plan — showing cached data';
+    render();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
