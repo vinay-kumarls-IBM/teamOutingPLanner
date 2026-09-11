@@ -1,0 +1,2 @@
+# teamOutingPLanner
+Team outing planner
