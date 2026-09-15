@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  ADMIN TOOL — DO NOT COMMIT OR SHARE THIS FILE                      ║
+  ║  This file contains your GitHub Personal Access Token.              ║
+  ║  Keep it on your machine only. Viewers use index.html instead.      ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+
+  SETUP (one-time):
+  1. Go to https://github.com/settings/tokens/new
+  2. Name it "outing-planner", select scope: "repo" (or just "public_repo")
+  3. Paste the token below in CONFIG.GH_TOKEN
+  4. Open this file in your browser → edit → click Save to GitHub
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>🔑 Outing Planner — Admin</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;background:#f0f2f5;color:#1f2328;min-height:100vh}
+.header{background:#161616;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.header h1{font-size:17px;font-weight:700}
+.header-sub{font-size:11px;color:#8d8d8d;margin-top:2px}
+.stats-row{display:flex;gap:18px;flex-wrap:wrap}
+.stat{text-align:center}.stat-val{font-size:20px;font-weight:700;color:#78a9ff}.stat-lbl{font-size:10px;color:#8d8d8d;margin-top:1px}
+.tabs{display:flex;background:#262626;border-bottom:2px solid #393939}
+.tab-btn{padding:12px 26px;font-size:13px;font-weight:600;color:#8d8d8d;border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.15s}
+.tab-btn.active{color:#fff;border-bottom-color:#78a9ff}
+.tab-btn:hover:not(.active){color:#c6c6c6}
+.panel{display:none;padding:20px 24px}.panel.active{display:block}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:20px}
+.section-head h2{font-size:14px;font-weight:700}
+.pill{font-size:11px;background:#393939;color:#c6c6c6;border-radius:20px;padding:2px 10px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;padding:10px 16px;background:#fff;border:1px solid #e5e7eb;border-radius:8px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#444}
+.leg-dot{width:9px;height:9px;border-radius:50%}
+.vehicle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px}
+.v-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.v-card-head{padding:11px 14px;display:flex;align-items:center;gap:10px}
+.v-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.v-title{font-size:13px;font-weight:700}.v-sub{font-size:11px;color:#57606a;margin-top:1px}
+.v-seats{margin-left:auto;text-align:right}.seat-count{font-size:17px;font-weight:700}.seat-lbl{font-size:10px;color:#57606a}
+.seat-bar{display:flex;gap:3px;margin-top:3px}
+.sq{width:9px;height:9px;border-radius:2px}
+.v-drop{min-height:56px;padding:8px;border-top:1px solid #f3f4f6;display:flex;flex-direction:column;gap:5px}
+.v-drop.drag-over,.pool-drop.drag-over,.room-drop.drag-over{background:#eff6ff;outline:2px dashed #3b82d4}
+.pool-card{background:#fff;border:2px dashed #d1d5db;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.pool-head{padding:10px 16px;background:#fafafa;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px}
+.pool-drop{padding:10px;display:flex;flex-wrap:wrap;gap:6px;min-height:46px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px 4px 5px;border-radius:20px;border:1px solid #e5e7eb;background:#fff;cursor:grab;user-select:none;transition:box-shadow .13s,transform .13s;white-space:nowrap;font-size:12px}
+.chip:active{cursor:grabbing}.chip.dragging{opacity:.35;transform:scale(.94)}
+.chip:hover{box-shadow:0 2px 7px rgba(0,0,0,.11);transform:translateY(-1px)}
+.chip-av{width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:#fff;flex-shrink:0}
+.chip-name{font-weight:600;color:#1f2328}
+.food-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.stay-badge{font-size:10px;padding:1px 6px;border-radius:7px}
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:14px}
+.room-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.room-head{padding:11px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f3f4f6}
+.room-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.room-title{font-size:13px;font-weight:700}.room-sub{font-size:11px;color:#57606a;margin-top:1px}
+.room-capacity{margin-left:auto;text-align:right}
+.room-drop{min-height:56px;padding:8px;display:flex;flex-direction:column;gap:5px}
+.p-row{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:6px;border:1px solid #f3f4f6;cursor:grab;transition:box-shadow .13s;background:#fff}
+.p-row:hover{box-shadow:0 1px 5px rgba(0,0,0,.09)}.p-row.dragging{opacity:.35}
+.p-av{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0}
+.p-name{font-weight:600;font-size:12.5px;flex:1}.p-loc{font-size:11px;color:#57606a}
+.food-tag{font-size:10px;padding:2px 8px;border-radius:9px;font-weight:600}
+.food-tag.veg{background:#dcfce7;color:#166534}.food-tag.nonveg{background:#fee2e2;color:#991b1b}
+.people-table{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden}
+.people-table table{width:100%;border-collapse:collapse}
+.people-table th{text-align:left;font-size:11px;font-weight:700;color:#57606a;text-transform:uppercase;letter-spacing:.5px;padding:9px 13px;border-bottom:1px solid #e5e7eb;background:#fafafa}
+.people-table td{padding:8px 13px;border-bottom:1px solid #f3f4f6;font-size:12px;vertical-align:middle}
+.people-table tr:last-child td{border-bottom:none}.people-table tr:hover td{background:#fafbfc}
+.info-banner{background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#854d0e;display:flex;gap:9px}
+.driver-badge{font-size:10px;padding:1px 6px;border-radius:6px;color:#fff;font-weight:600}
+.hdr-btn{padding:6px 14px;border-radius:6px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.hdr-btn.save{background:#22c55e;color:#14532d}.hdr-btn.save:hover{background:#16a34a}
+.hdr-btn.save:disabled{background:#374151;color:#6b7280;cursor:not-allowed}
+.save-status{font-size:11px;color:#6b7280;margin-top:2px}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+.s-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:14px;text-align:center}
+.s-val{font-size:26px;font-weight:700}.s-lbl{font-size:11px;color:#57606a;margin-top:3px}
+/* ── Manage tab ── */
+.mgmt-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.mgmt-grid{grid-template-columns:1fr}}
+.form-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.form-card-head{padding:12px 16px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:8px}
+.form-card-head h3{font-size:13px;font-weight:700;flex:1}
+.form-card-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:600;color:#57606a;text-transform:uppercase;letter-spacing:.4px}
+.field input,.field select{padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;outline:none;background:#fff;color:#1f2328}
+.field input:focus,.field select:focus{border-color:#3b82d4;box-shadow:0 0 0 2px rgba(59,130,212,.15)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.add-btn{padding:8px 14px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#3b82d4;color:#fff;transition:.15s;align-self:flex-start}
+.add-btn:hover{background:#2563eb}
+.list-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-top:4px}
+.list-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #f3f4f6;font-size:12.5px}
+.list-row:last-child{border-bottom:none}
+.list-row:hover{background:#fafbfc}
+.list-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.list-name{font-weight:600;flex:1}
+.list-meta{font-size:11px;color:#57606a}
+.del-btn{padding:3px 9px;border-radius:5px;border:1px solid #fca5a5;background:#fee2e2;color:#991b1b;font-size:11px;cursor:pointer;font-weight:600;flex-shrink:0}
+.del-btn:hover{background:#fecaca}
+.move-btn{padding:3px 7px;border-radius:5px;border:1px solid #e5e7eb;background:#f9fafb;color:#374151;font-size:11px;cursor:pointer;flex-shrink:0}
+.move-btn:hover{background:#f3f4f6}
+.pri-badge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;background:#fef9c3;color:#854d0e;border:1px solid #fde68a}
+.warn-badge{display:inline-flex;align-items:center;gap:5px;background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:8px 12px;font-size:12px;color:#9a3412;margin-bottom:10px}
+.edit-btn{padding:3px 8px;border-radius:5px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;font-size:12px;cursor:pointer;flex-shrink:0}
+.edit-btn:hover{background:#dbeafe}
+.cancel-btn{padding:7px 14px;border-radius:6px;border:1px solid #e5e7eb;background:#f9fafb;color:#374151;font-size:12px;font-weight:600;cursor:pointer}
+.cancel-btn:hover{background:#f3f4f6}
+.list-row.editing{background:#eff6ff!important;border-left:3px solid #3b82d4;padding-left:9px}
+.form-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.s-card.blue{border-top:3px solid #3b82d4}.s-card.green{border-top:3px solid #22c55e}
+.s-card.purple{border-top:3px solid #7c5cd8}.s-card.orange{border-top:3px solid #f59e0b}.s-card.red{border-top:3px solid #ef4444}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🔑 IBM Team Outing – Admin Editor</h1>
+    <div class="header-sub" id="hdr-sub">Loading…</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-val">35</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-val">30</div><div class="stat-lbl">Overnight</div></div>
+      <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Day Trip</div></div>
+      <div class="stat"><div class="stat-val">9</div><div class="stat-lbl">🥗 Veg</div></div>
+      <div class="stat"><div class="stat-val">26</div><div class="stat-lbl">🍗 Non-Veg</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="background:#22c55e;color:#14532d;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700">✏️ Admin</span>
+        <button class="hdr-btn save" id="save-btn" onclick="saveToGitHub()" disabled>💾 Save to GitHub</button>
+      </div>
+      <div class="save-status" id="save-status">Loading current plan…</div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('travel',this)">🚗 Travel Plan</button>
+  <button class="tab-btn" onclick="showTab('rooms',this)">🛏️ Room Allotment</button>
+  <button class="tab-btn" onclick="showTab('manage',this)">⚙️ Manage</button>
+  <button class="tab-btn" onclick="showTab('summary',this)">📊 Summary</button>
+</div>
+
+<!-- TRAVEL -->
+<div id="tab-travel" class="panel active">
+  <div class="info-banner">✏️ <span><strong>Admin mode:</strong> Drag people between vehicles or the pool. Click <strong>💾 Save to GitHub</strong> when done — viewers will see the update instantly.</span></div>
+  <div class="legend">
+    <div class="legend-item"><div class="leg-dot" style="background:#22c55e"></div>Veg</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#ef4444"></div>Non-Veg</div>
+    <div class="legend-item"><span style="background:#dbeafe;color:#1e40af;font-size:11px;padding:1px 8px;border-radius:7px;font-weight:600">Overnight</span></div>
+    <div class="legend-item"><span style="background:#fef9c3;color:#854d0e;font-size:11px;padding:1px 8px;border-radius:7px;font-weight:600">Day</span></div>
+    <div class="legend-item"><span style="background:#3b82d4;color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;font-weight:600">Driver</span> = car owner</div>
+  </div>
+  <div class="pool-card">
+    <div class="pool-head">🔄 Unassigned Pool &nbsp;<span id="pool-count" style="background:#fee2e2;color:#991b1b;border-radius:12px;padding:2px 9px;font-size:11px;font-weight:600"></span></div>
+    <div class="pool-drop" id="pool"></div>
+  </div>
+  <div class="section-head"><h2>🚗 Car Vehicles — 5 cars, 17 total passenger seats</h2></div>
+  <div class="vehicle-grid" id="car-grid"></div>
+  <div class="section-head" style="margin-top:22px"><h2>🏍️ Bike Riders — travelling independently (10 people)</h2></div>
+  <div id="bike-list" style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:7px"></div>
+</div>
+
+<!-- ROOMS -->
+<div id="tab-rooms" class="panel">
+  <div class="info-banner">✏️ <span><strong>Admin mode:</strong> Drag people between rooms. Total capacity: <strong>32</strong>. Click <strong>💾 Save to GitHub</strong> when done.</span></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;flex:1;min-width:180px">
+      <div style="width:32px;height:32px;border-radius:7px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:17px">👑</div>
+      <div><div style="font-weight:700;font-size:13px">Premium Room</div><div style="font-size:11px;color:#57606a">6 rooms · King + extra bed · 3 pax each</div></div>
+      <div style="margin-left:auto;text-align:right"><div style="font-size:18px;font-weight:700;color:#7c5cd8">18</div><div style="font-size:10px;color:#57606a">total pax</div></div>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;flex:1;min-width:180px">
+      <div style="width:32px;height:32px;border-radius:7px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:17px">🏡</div>
+      <div><div style="font-weight:700;font-size:13px">Deluxe Cottage</div><div style="font-size:11px;color:#57606a">2 rooms · King + sofa · 4 pax · Non-AC</div></div>
+      <div style="margin-left:auto;text-align:right"><div style="font-size:18px;font-weight:700;color:#3b82d4">8</div><div style="font-size:10px;color:#57606a">total pax</div></div>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;flex:1;min-width:180px">
+      <div style="width:32px;height:32px;border-radius:7px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:17px">🏕️</div>
+      <div><div style="font-weight:700;font-size:13px">2-Bedroom Villa</div><div style="font-size:11px;color:#57606a">1 villa · King + extra bed · 6 pax</div></div>
+      <div style="margin-left:auto;text-align:right"><div style="font-size:18px;font-weight:700;color:#22c55e">6</div><div style="font-size:10px;color:#57606a">total pax</div></div>
+    </div>
+  </div>
+  <div class="section-head"><h2>🛏️ Room Allocation — 9 rooms · 26 overnight guests · 32 capacity</h2></div>
+  <div class="room-grid" id="room-grid"></div>
+  <div class="section-head" style="margin-top:22px"><h2>☀️ Day Trip (No Room Needed) — 5 people</h2></div>
+  <div class="pool-card">
+    <div class="pool-drop" id="daytrip-pool" style="gap:5px;flex-direction:column"></div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div id="tab-summary" class="panel">
+  <div class="summary-grid">
+    <div class="s-card blue"><div class="s-val">35</div><div class="s-lbl">Total Attendees</div></div>
+    <div class="s-card green"><div class="s-val">30</div><div class="s-lbl">Overnight</div></div>
+    <div class="s-card orange"><div class="s-val">5</div><div class="s-lbl">Day Trip</div></div>
+    <div class="s-card purple"><div class="s-val">9</div><div class="s-lbl">🥗 Veg</div></div>
+    <div class="s-card red"><div class="s-val">26</div><div class="s-lbl">🍗 Non-Veg</div></div>
+    <div class="s-card blue"><div class="s-val">6</div><div class="s-lbl">Cars (rides)</div></div>
+    <div class="s-card orange"><div class="s-val">10</div><div class="s-lbl">Bike Riders</div></div>
+    <div class="s-card green"><div class="s-val">19</div><div class="s-lbl">Need Carpool</div></div>
+    <div class="s-card purple"><div class="s-val">21</div><div class="s-lbl">Car Seats Available</div></div>
+  </div>
+  <div class="section-head"><h2>👥 All 35 Team Members</h2></div>
+  <div class="people-table">
+    <table><thead><tr><th>#</th><th>Name</th><th>Location</th><th>Travel</th><th>Stay</th><th>Food</th></tr></thead>
+    <tbody id="people-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- MANAGE TAB -->
+<div id="tab-manage" class="panel">
+  <div class="warn-badge">⚠️ Adding/removing here updates the live plan. Click <strong>💾 Save to GitHub</strong> in the header after making changes.</div>
+
+  <div class="mgmt-grid">
+
+    <!-- ── ADD / EDIT PERSON ── -->
+    <div>
+      <div class="section-head" style="margin-top:0"><h2 id="pm-form-title">👤 Add New Member</h2></div>
+      <div class="form-card">
+        <div class="form-card-body">
+          <div class="field"><label>Full Name *</label><input id="pm-name" placeholder="e.g. Rahul Sharma" /></div>
+          <div class="field-row">
+            <div class="field"><label>Email</label><input id="pm-email" placeholder="user@ibm.com" /></div>
+            <div class="field"><label>Location / Area *</label><input id="pm-loc" placeholder="e.g. Koramangala" /></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Travel Mode</label>
+              <select id="pm-travel">
+                <option value="Carpool">Carpool with others</option>
+                <option value="Bike">Own Bike</option>
+                <option value="Car (Driver)">Own Car (Driver)</option>
+                <option value="Car (own)">Own Car (not sharing)</option>
+              </select>
+            </div>
+            <div class="field"><label>Stay</label>
+              <select id="pm-stay">
+                <option value="Overnight">Overnight</option>
+                <option value="Day">Day trip only</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Food</label>
+              <select id="pm-food">
+                <option value="Non Veg">Non-Veg 🍗</option>
+                <option value="Veg">Veg 🥗</option>
+              </select>
+            </div>
+            <div class="field"><label>Priority / Sequence</label>
+              <input id="pm-priority" type="number" min="1" placeholder="Leave blank = add at end" />
+            </div>
+          </div>
+          <div id="pm-car-wrap" class="field" style="display:none">
+            <label>Car Seats (excl. driver)</label>
+            <input id="pm-carseats" type="number" min="1" max="7" placeholder="e.g. 4" value="4"/>
+          </div>
+          <div class="form-actions">
+            <button id="pm-add-btn" class="add-btn" onclick="submitPerson()">➕ Add Member</button>
+            <button id="pm-cancel-btn" class="cancel-btn" onclick="cancelEditPerson()" style="display:none">✕ Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- People list -->
+      <div class="section-head"><h2>👥 Current Members <span id="people-count-badge" class="pill"></span></h2></div>
+      <div class="list-card" id="people-list"></div>
+    </div>
+
+    <!-- ── ADD / EDIT VEHICLE ── -->
+    <div>
+      <div class="section-head" style="margin-top:0"><h2 id="cv-form-title">🚗 Add New Vehicle</h2></div>
+      <div class="form-card">
+        <div class="form-card-body">
+          <div class="field"><label>Driver Name *</label>
+            <select id="cv-driver">
+              <option value="">— select from members —</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Zone / Route Label *</label><input id="cv-zone" placeholder="e.g. Whitefield / East" /></div>
+            <div class="field"><label>Seats (excl. driver) *</label><input id="cv-seats" type="number" min="1" max="8" placeholder="e.g. 4" /></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Vehicle Type</label>
+              <select id="cv-emoji">
+                <option value="🚗">🚗 Car</option>
+                <option value="🚙">🚙 SUV</option>
+                <option value="🚐">🚐 Van / MPV</option>
+                <option value="🏍️">🏍️ Bike</option>
+              </select>
+            </div>
+            <div class="field"><label>Priority / Order</label>
+              <input id="cv-priority" type="number" min="1" placeholder="Leave blank = add at end" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button id="cv-add-btn" class="add-btn" onclick="submitCar()">➕ Add Vehicle</button>
+            <button id="cv-cancel-btn" class="cancel-btn" onclick="cancelEditCar()" style="display:none">✕ Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cars list -->
+      <div class="section-head"><h2>🚗 Current Vehicles <span id="cars-count-badge" class="pill"></span></h2></div>
+      <div class="list-card" id="cars-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<div style="text-align:center;font-size:12px;color:#9ca3af;padding:20px;border-top:1px solid #e5e7eb;margin-top:16px">
+  Made with IBM Bob &nbsp;·&nbsp; Admin Tool — keep this file local
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// CONFIG — paste your GitHub Personal Access Token here
+// ════════════════════════════════════════════════════════
+const CONFIG = {
+  GH_TOKEN : 'YOUR_GITHUB_PAT_HERE'  // ← paste your token here, keep this file local,
+  GH_OWNER : 'vinay-kumarls-IBM',
+  GH_REPO  : 'teamOutingPLanner',
+  GH_FILE  : 'plan.json',
+  GH_BRANCH: 'main',
+};
+// ════════════════════════════════════════════════════════
+
+const API_BASE = `https://api.github.com/repos/${CONFIG.GH_OWNER}/${CONFIG.GH_REPO}/contents/${CONFIG.GH_FILE}`;
+const RAW_URL  = `https://raw.githubusercontent.com/${CONFIG.GH_OWNER}/${CONFIG.GH_REPO}/${CONFIG.GH_BRANCH}/${CONFIG.GH_FILE}`;
+
+// ── DATA (mutable — Manage tab can add/remove) ───────────────
+let PEOPLE = [
+  {id:1, name:"Kshitij Kaithal",           loc:"Bellandur",                      travel:"Bike",        stay:"Day",      food:"Veg"},
+  {id:2, name:"Saurabh Kumar",              loc:"BTM",                            travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:3, name:"Kalyani Geetha Unni",        loc:"Sarjapur Road",                  travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:4, name:"Ashish Chandra K",           loc:"KR Garden / Murugeshpalya",      travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:5, name:"Vinay Kumar L S",            loc:"Attiguppe Metro",                travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:6, name:"Prasanth Kumar P",           loc:"Bangalore (Central)",            travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:7, name:"Subhasish Dey",              loc:"Electronic City",                travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+  {id:8, name:"Baijnath Kumar",             loc:"Balagere Road",                  travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:9, name:"Giridhar Panuganti",         loc:"HSR Layout",                     travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:10,name:"Kolli Srinivas",             loc:"Sarjapur",                       travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:11,name:"Veer M",                     loc:"Chandapur",                      travel:"Bike",        stay:"Overnight",food:"Veg"},
+  {id:12,name:"Saurabh Kushwaha",           loc:"—",                              travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:13,name:"Vinay Punnoose",             loc:"Sarjapur",                       travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+  {id:14,name:"Chirag Agarwal",             loc:"Murugeshpalaya / HAL",           travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:15,name:"Amit Bevinakatti",           loc:"Kumbalgodu / Mysuru Rd",         travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:16,name:"Rakesh Mandala",             loc:"Kundalahalli",                   travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:17,name:"Vikneshwar Anandan",         loc:"Munnekollal",                    travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:18,name:"Arnab Ghosh",                loc:"Marathahalli",                   travel:"Bike",        stay:"Day",      food:"Non Veg"},
+  {id:19,name:"Aditya Saurabh",             loc:"Near IIM",                       travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:20,name:"Sri Anjaneyulu Uppalapati",  loc:"AET Jn / Embassy Tech Village",  travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:21,name:"Ganga Raghu",                loc:"AECS Layout / Brookfield",       travel:"Carpool",     stay:"Day",      food:"Veg"},
+  {id:22,name:"Ranjit Dash",                loc:"Kodathi",                        travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+  {id:23,name:"Pazhani T",                  loc:"Mahadevapura",                   travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:24,name:"Thasmiya Nazaneen P",        loc:"—",                              travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:25,name:"Bhaskar Bhattarai",          loc:"Prestige City / Sarjapur Rd",    travel:"Car (own)",   stay:"Overnight",food:"Non Veg"},
+  {id:26,name:"Biswajit Bhuyan",            loc:"Electronic City Phase 1",        travel:"Car (Driver)",stay:"Day",      food:"Non Veg"},
+  {id:27,name:"Satheesh K Dominic",         loc:"Carmelaram Railway Stn",         travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+  {id:28,name:"Natarajan Saravanan",        loc:"AECS Layout / Marathahalli",     travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:29,name:"Santhosh N R",               loc:"Marathahalli",                   travel:"Bike",        stay:"Overnight",food:"Non Veg"},
+  {id:30,name:"Shruthi Poldas",             loc:"Sarjapur",                       travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:31,name:"Venktesh Kumar",             loc:"Munnekolala",                    travel:"Bike",        stay:"Day",      food:"Non Veg"},
+  {id:32,name:"Shreekar Puranik",           loc:"Office → Satheesh's car",        travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:33,name:"Swetha M",                   loc:"Kadubeesanahalli",               travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:34,name:"Anand Gotluri",              loc:"Hebbal",                         travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:35,name:"Kanwaldeep Saluja",          loc:"Indiranagar route",              travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
+];
+
+let CARS = [
+  {id:"car1",driver:7, label:"Subhasish Dey",      emoji:"🚗",color:"#3b82d4",bg:"#dbeafe",totalSeats:5,zone:"Electronic City / South"},
+  {id:"car2",driver:13,label:"Vinay Punnoose",      emoji:"🚗",color:"#7c5cd8",bg:"#ede9fe",totalSeats:4,zone:"Sarjapur / SE Corridor"},
+  {id:"car3",driver:22,label:"Ranjit Dash",         emoji:"🚙",color:"#f59e0b",bg:"#fef3c7",totalSeats:2,zone:"Kodathi / Carmelaram"},
+  {id:"car4",driver:26,label:"Biswajit Bhuyan",     emoji:"🚙",color:"#22c55e",bg:"#dcfce7",totalSeats:3,zone:"Electronic City Ph1 (Day)"},
+  {id:"car5",driver:27,label:"Satheesh K Dominic",  emoji:"🚐",color:"#ef4444",bg:"#fee2e2",totalSeats:3,zone:"Carmelaram / East Bangalore"},
+  {id:"car6",driver:35,label:"Kanwaldeep Saluja",   emoji:"🚗",color:"#14b8a6",bg:"#ccfbf1",totalSeats:3,zone:"Indiranagar / North Bangalore"},
+];
+
+const ROOM_TYPES = [
+  {type:"premium",label:"Premium Room",   emoji:"👑",color:"#7c5cd8",bg:"#ede9fe",capacity:3,extra:"Extra bed available",count:6},
+  {type:"deluxe", label:"Deluxe Cottage", emoji:"🏡",color:"#3b82d4",bg:"#dbeafe",capacity:4,extra:"Sofa · Non-AC rest area",count:2},
+  {type:"villa",  label:"2-Bedroom Villa",emoji:"🏕️",color:"#22c55e",bg:"#dcfce7",capacity:6,extra:"Extra bed available",count:1},
+];
+const ROOMS=[];
+for(const rt of ROOM_TYPES) for(let i=1;i<=rt.count;i++) ROOMS.push({id:`${rt.type}${i}`,label:`${rt.label} ${i}`,emoji:rt.emoji,color:rt.color,bg:rt.bg,capacity:rt.capacity,note:rt.extra});
+
+// ── DEFAULT STATE ─────────────────────────────────────────────
+const DEFAULT_STATE = {
+  car:  {car1:[7,8,9,19,20],car2:[13,3,10,30,15],car3:[22,4,14],car4:[26,17,21,2],car5:[27,12,24],pool:[]},
+  room: {premium1:[7,13,25],premium2:[22,27,12],premium3:[8,9,19],premium4:[20,4,17],premium5:[3,10,30],premium6:[14,15,24],deluxe1:[7,13,22,27],deluxe2:[5,2,12,25],villa1:[6,11,16,23,28,29],'daytrip-pool':[1,18,21,26,31]},
+};
+
+// ── STATE ─────────────────────────────────────────────────────
+let carState={}, roomState={};
+let currentFileSHA = '';  // needed by GitHub API to update file
+
+const ACOLORS=["#3b82f6","#7c5cd8","#22c55e","#f59e0b","#ef4444","#14b8a6","#8b5cf6","#f97316","#06b6d4","#ec4899","#64748b","#a16207"];
+const byId=id=>PEOPLE.find(p=>p.id===id);
+const initials=n=>n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+const acol=id=>ACOLORS[id%ACOLORS.length];
+
+// ── DRAG ──────────────────────────────────────────────────────
+let dragId=null, dragMode=null;
+function removeFromAllCar(pid){ for(const k of Object.keys(carState)) carState[k]=carState[k].filter(x=>x!==pid); }
+function removeFromAllRoom(pid){ for(const k of Object.keys(roomState)) roomState[k]=roomState[k].filter(x=>x!==pid); }
+
+function setupDrop(el,containerId,mode){
+  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('drag-over');});
+  el.addEventListener('dragleave',e=>{if(!el.contains(e.relatedTarget))el.classList.remove('drag-over');});
+  el.addEventListener('drop',e=>{
+    e.preventDefault(); el.classList.remove('drag-over');
+    if(dragId===null||dragMode!==mode) return;
+    if(mode==='travel'){ removeFromAllCar(dragId); if(!carState[containerId])carState[containerId]=[]; carState[containerId].push(dragId); }
+    else { removeFromAllRoom(dragId); if(!roomState[containerId])roomState[containerId]=[]; roomState[containerId].push(dragId); }
+    dragId=null; markUnsaved(); render();
+  });
+}
+
+// ── CHIP ──────────────────────────────────────────────────────
+function makeChip(person, isDriver, driverColor){
+  const div=document.createElement('div'); div.className='chip'; div.draggable=true;
+  if(isDriver){div.style.borderColor=driverColor;div.style.background='#f8f9ff';}
+  const fc=person.food==='Veg'?'#22c55e':'#ef4444';
+  const sb=person.stay==='Overnight'?'background:#dbeafe;color:#1e40af':'background:#fef9c3;color:#854d0e';
+  div.innerHTML=`<div class="chip-av" style="background:${acol(person.id)}">${initials(person.name)}</div>`+
+    `<span class="chip-name">${person.name.split(' ')[0]}</span>`+
+    `<div class="food-dot" style="background:${fc}" title="${person.food}"></div>`+
+    `<span class="stay-badge" style="${sb}">${person.stay==='Overnight'?'🌙':'☀️'}</span>`+
+    (isDriver?`<span class="driver-badge" style="background:${driverColor};font-size:10px;padding:1px 6px;border-radius:6px;color:#fff;font-weight:600">Driver</span>`:'');
+  div.title=`${person.name} | ${person.loc} | ${person.food}`;
+  div.addEventListener('dragstart',e=>{ dragId=person.id; dragMode='travel'; div.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+  div.addEventListener('dragend',()=>div.classList.remove('dragging'));
+  return div;
+}
+
+function makeRow(person){
+  const div=document.createElement('div'); div.className='p-row'; div.draggable=true;
+  div.innerHTML=`<div class="p-av" style="background:${acol(person.id)}">${initials(person.name)}</div>`+
+    `<div style="flex:1;min-width:0"><div class="p-name">${person.name}</div><div class="p-loc">${person.loc}</div></div>`+
+    `<span class="food-tag ${person.food==='Veg'?'veg':'nonveg'}">${person.food}</span>`;
+  div.addEventListener('dragstart',e=>{ dragId=person.id; dragMode='room'; div.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+  div.addEventListener('dragend',()=>div.classList.remove('dragging'));
+  return div;
+}
+
+function seatBar(used,total,color){
+  let h='<div class="seat-bar">';
+  for(let i=0;i<total;i++) h+=`<div class="sq" style="background:${i<used?color:'#e5e7eb'}"></div>`;
+  return h+'</div>';
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function render(){ renderTravel(); renderRooms(); renderSummaryTable(); }
+
+function renderTravel(){
+  const poolIds=carState.pool||[];
+  const pool=document.getElementById('pool'); pool.innerHTML='';
+  document.getElementById('pool-count').textContent=poolIds.length+' unassigned';
+  setupDrop(pool,'pool','travel');
+  poolIds.forEach(pid=>{const p=byId(pid);if(p)pool.appendChild(makeChip(p,false,''));});
+
+  const grid=document.getElementById('car-grid'); grid.innerHTML='';
+  for(const car of CARS){
+    const occ=carState[car.id]||[], used=occ.length, total=car.totalSeats+1, free=Math.max(0,total-used);
+    const card=document.createElement('div'); card.className='v-card';
+    card.innerHTML=`<div class="v-card-head" style="background:${car.bg}">
+      <div class="v-icon" style="background:${car.color}">${car.emoji}</div>
+      <div><div class="v-title">${car.label}</div><div class="v-sub">${car.zone}</div></div>
+      <div class="v-seats"><div class="seat-count" style="color:${car.color}">${used}/${total}</div><div class="seat-lbl">${free} seat${free!==1?'s':''} free</div>${seatBar(used,total,car.color)}</div>
+    </div><div class="v-drop" id="${car.id}"></div>`;
+    grid.appendChild(card);
+    const drop=card.querySelector('.v-drop');
+    setupDrop(drop,car.id,'travel');
+    occ.forEach(pid=>{const p=byId(pid);if(p)drop.appendChild(makeChip(p,pid===car.driver,car.color));});
+  }
+
+  const bl=document.getElementById('bike-list'); bl.innerHTML='';
+  PEOPLE.filter(p=>p.travel==='Bike').forEach(p=>{ const c=makeChip(p,false,''); c.draggable=false; c.style.cursor='default'; bl.appendChild(c); });
+}
+
+function renderRooms(){
+  const grid=document.getElementById('room-grid'); grid.innerHTML='';
+  for(const room of ROOMS){
+    const occ=roomState[room.id]||[], used=occ.length, total=room.capacity, free=Math.max(0,total-used);
+    const card=document.createElement('div'); card.className='room-card';
+    card.innerHTML=`<div class="room-head" style="background:${room.bg}">
+      <div class="room-icon" style="background:${room.color}">${room.emoji}</div>
+      <div><div class="room-title">${room.label}</div><div class="room-sub">${room.note}</div></div>
+      <div class="room-capacity"><div class="seat-count" style="color:${room.color}">${used}/${total}</div><div class="seat-lbl">${free} bed${free!==1?'s':''} free</div>${seatBar(used,total,room.color)}</div>
+    </div><div class="room-drop" id="${room.id}"></div>`;
+    grid.appendChild(card);
+    const drop=card.querySelector('.room-drop');
+    setupDrop(drop,room.id,'room');
+    occ.forEach(pid=>{const p=byId(pid);if(p)drop.appendChild(makeRow(p));});
+  }
+  const dp=document.getElementById('daytrip-pool'); dp.innerHTML='';
+  setupDrop(dp,'daytrip-pool','room');
+  (roomState['daytrip-pool']||[]).forEach(pid=>{const p=byId(pid);if(p)dp.appendChild(makeRow(p));});
+}
+
+function renderSummaryTable(){
+  const tb=document.getElementById('people-tbody'); tb.innerHTML='';
+  const emoji={Bike:'🏍️','Car (Driver)':'🚗','Car (own)':'🚗',Carpool:'🤝'};
+  for(const p of PEOPLE){
+    const tr=document.createElement('tr');
+    const sc=p.stay==='Overnight'?'background:#dbeafe;color:#1e40af':'background:#fef9c3;color:#854d0e';
+    tr.innerHTML=`<td><div style="width:22px;height:22px;border-radius:50%;background:${acol(p.id)};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">${initials(p.name)}</div></td>`+
+      `<td style="font-weight:600">${p.name}</td><td style="color:#57606a;font-size:11px">${p.loc}</td>`+
+      `<td>${emoji[p.travel]||'🚗'} ${p.travel}</td>`+
+      `<td><span style="${sc};border-radius:9px;padding:2px 8px;font-size:11px;font-weight:600">${p.stay}</span></td>`+
+      `<td><span class="food-tag ${p.food==='Veg'?'veg':'nonveg'}">${p.food}</span></td>`;
+    tb.appendChild(tr);
+  }
+}
+
+function showTab(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── UNSAVED INDICATOR ─────────────────────────────────────────
+function markUnsaved(){
+  document.getElementById('save-btn').disabled=false;
+  document.getElementById('save-status').style.color='#f59e0b';
+  document.getElementById('save-status').textContent='⚠️ Unsaved changes';
+}
+
+// ── GITHUB SAVE ───────────────────────────────────────────────
+function setSaveStatus(msg, color='#6b7280'){
+  const el=document.getElementById('save-status');
+  el.style.color=color; el.textContent=msg;
+}
+
+async function saveToGitHub(){
+  const btn=document.getElementById('save-btn');
+  btn.disabled=true; btn.textContent='⏳ Saving…';
+  setSaveStatus('Pushing to GitHub…');
+
+  const payload = { car: carState, room: roomState, savedAt: new Date().toISOString() };
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+
+  try {
+    const body = { message:`Update outing plan — ${new Date().toLocaleString()}`, content, branch: CONFIG.GH_BRANCH };
+    if(currentFileSHA) body.sha = currentFileSHA;
+
+    const res = await fetch(API_BASE, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${CONFIG.GH_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){ const e=await res.json(); throw new Error(e.message||res.status); }
+    const data = await res.json();
+    currentFileSHA = data.content.sha;
+    const ts = new Date().toLocaleTimeString();
+    setSaveStatus(`✅ Saved at ${ts} — viewers will see this now`, '#22c55e');
+    btn.textContent='💾 Save to GitHub';
+    btn.disabled=true; // no new changes yet
+  } catch(e){
+    setSaveStatus(`❌ Save failed: ${e.message}`, '#ef4444');
+    btn.textContent='💾 Save to GitHub';
+    btn.disabled=false;
+  }
+}
+
+// ── LOAD CURRENT PLAN FROM GITHUB ────────────────────────────
+async function init(){
+  setSaveStatus('Loading current plan from GitHub…');
+  try {
+    // Use Contents API (not raw) so we get the SHA for future PUTs
+    const res = await fetch(API_BASE+'?ref='+CONFIG.GH_BRANCH, {
+      headers: { 'Authorization': `token ${CONFIG.GH_TOKEN}` }
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const meta = await res.json();
+    currentFileSHA = meta.sha;
+    const decoded = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
+    carState  = decoded.car  || JSON.parse(JSON.stringify(DEFAULT_STATE.car));
+    roomState = decoded.room || JSON.parse(JSON.stringify(DEFAULT_STATE.room));
+    const ts = decoded.savedAt ? new Date(decoded.savedAt).toLocaleString() : '—';
+    setSaveStatus(`Loaded · Last saved: ${ts}`);
+    document.getElementById('hdr-sub').textContent = 'Admin mode · Drag to rearrange · Click 💾 Save to GitHub to publish';
+    document.getElementById('save-btn').disabled = true;
+    render(); renderManage();
+  } catch(e){
+    setSaveStatus(`Could not load from GitHub: ${e.message} — using defaults`, '#f59e0b');
+    carState  = JSON.parse(JSON.stringify(DEFAULT_STATE.car));
+    roomState = JSON.parse(JSON.stringify(DEFAULT_STATE.room));
+    document.getElementById('hdr-sub').textContent = 'Admin mode · Using defaults (check token)';
+    document.getElementById('save-btn').disabled = false;
+    render(); renderManage();
+  }
+}
+
+// ── MANAGE TAB ────────────────────────────────────────────────
+const CAR_COLORS=['#3b82d4','#7c5cd8','#f59e0b','#22c55e','#ef4444','#14b8a6','#8b5cf6','#f97316','#06b6d4','#ec4899'];
+const CAR_BGS   =['#dbeafe','#ede9fe','#fef3c7','#dcfce7','#fee2e2','#ccfbf1','#ede9fe','#ffedd5','#cffafe','#fce7f3'];
+
+function nextId(){ return PEOPLE.length ? Math.max(...PEOPLE.map(p=>p.id))+1 : 1; }
+function nextCarId(){
+  const nums=CARS.map(c=>parseInt(c.id.replace(/\D/g,''))||0);
+  return 'car'+(Math.max(0,...nums)+1);
+}
+
+// Show/hide car-seats field based on travel mode
+document.getElementById('pm-travel').addEventListener('change', function(){
+  document.getElementById('pm-car-wrap').style.display = this.value==='Car (Driver)'?'':'none';
+});
+
+function addPerson(){
+  const name  = document.getElementById('pm-name').value.trim();
+  const loc   = document.getElementById('pm-loc').value.trim();
+  const travel= document.getElementById('pm-travel').value;
+  const stay  = document.getElementById('pm-stay').value;
+  const food  = document.getElementById('pm-food').value;
+  const priRaw= document.getElementById('pm-priority').value.trim();
+
+  if(!name || !loc){ alert('Name and Location are required.'); return; }
+
+  const id = nextId();
+  const person = {id, name, loc, travel, stay, food};
+
+  const pri = priRaw ? Math.max(1, Math.min(parseInt(priRaw), PEOPLE.length+1)) : PEOPLE.length+1;
+  PEOPLE.splice(pri-1, 0, person);
+
+  // If driver, auto-create a car for them
+  if(travel==='Car (Driver)'){
+    const seats = parseInt(document.getElementById('pm-carseats').value)||4;
+    const idx   = CARS.length % CAR_COLORS.length;
+    CARS.push({id:nextCarId(), driver:id, label:name, emoji:'🚗',
+               color:CAR_COLORS[idx], bg:CAR_BGS[idx], totalSeats:seats, zone:loc});
+    if(!carState[CARS[CARS.length-1].id]) carState[CARS[CARS.length-1].id]=[id];
+    refreshCarDriverSelect();
+  }
+
+  // Add to pool or daytrip based on stay
+  if(stay==='Day'){
+    if(!roomState['daytrip-pool']) roomState['daytrip-pool']=[];
+    roomState['daytrip-pool'].push(id);
+  } else {
+    if(!carState.pool) carState.pool=[];
+    carState.pool.push(id);
+  }
+
+  // Clear form
+  ['pm-name','pm-email','pm-loc','pm-priority'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('pm-travel').value='Carpool';
+  document.getElementById('pm-car-wrap').style.display='none';
+
+  markUnsaved();
+  renderManage();
+  render();
+  // Show toast
+  showToast(`✅ ${name} added — they're in the Unassigned pool. Drag them to a vehicle/room.`);
+}
+
+function removePerson(id){
+  const p = PEOPLE.find(x=>x.id===id);
+  if(!p) return;
+  if(!confirm(`Remove ${p.name} from the plan?`)) return;
+  PEOPLE = PEOPLE.filter(x=>x.id!==id);
+  // Remove from all car/room buckets
+  for(const k of Object.keys(carState))  carState[k]  = carState[k].filter(x=>x!==id);
+  for(const k of Object.keys(roomState)) roomState[k] = roomState[k].filter(x=>x!==id);
+  // If they were a driver, remove their car too
+  const driverCar = CARS.find(c=>c.driver===id);
+  if(driverCar){ removeCar(driverCar.id, true); return; } // removeCar will call render
+  markUnsaved(); renderManage(); render();
+  showToast(`🗑 ${p.name} removed.`);
+}
+
+function movePerson(id, dir){
+  const idx = PEOPLE.findIndex(p=>p.id===id);
+  const newIdx = idx + dir;
+  if(newIdx<0||newIdx>=PEOPLE.length) return;
+  [PEOPLE[idx],PEOPLE[newIdx]]=[PEOPLE[newIdx],PEOPLE[idx]];
+  markUnsaved(); renderManage(); renderSummaryTable();
+}
+
+function addCar(){
+  const driverId = parseInt(document.getElementById('cv-driver').value);
+  const zone     = document.getElementById('cv-zone').value.trim();
+  const seats    = parseInt(document.getElementById('cv-seats').value);
+  const emoji    = document.getElementById('cv-emoji').value;
+  const priRaw   = document.getElementById('cv-priority').value.trim();
+
+  if(!driverId){ alert('Please select a driver.'); return; }
+  if(!zone)    { alert('Zone / route label is required.'); return; }
+  if(!seats||seats<1){ alert('Please enter a valid seat count.'); return; }
+
+  const driver = PEOPLE.find(p=>p.id===driverId);
+  if(!driver){ alert('Driver not found in people list.'); return; }
+
+  const idx   = CARS.length % CAR_COLORS.length;
+  const carId = nextCarId();
+  const car   = {id:carId, driver:driverId, label:driver.name, emoji,
+                 color:CAR_COLORS[idx], bg:CAR_BGS[idx], totalSeats:seats, zone};
+
+  const pri = priRaw ? Math.max(1, Math.min(parseInt(priRaw), CARS.length+1)) : CARS.length+1;
+  CARS.splice(pri-1, 0, car);
+
+  // Move driver into their car
+  removeFromAllCar(driverId);
+  carState[carId] = [driverId];
+
+  // Clear form
+  document.getElementById('cv-driver').value='';
+  document.getElementById('cv-zone').value='';
+  document.getElementById('cv-seats').value='';
+  document.getElementById('cv-priority').value='';
+
+  markUnsaved(); renderManage(); render();
+  showToast(`✅ Car added for ${driver.name} — ${seats} passenger seats on ${zone} route.`);
+}
+
+function removeCar(carId, silent){
+  const car = CARS.find(c=>c.id===carId);
+  if(!car) return;
+  if(!silent && !confirm(`Remove ${car.label}'s car (${car.zone})?\nPassengers will be moved to the Unassigned pool.`)) return;
+  // Move all passengers to pool
+  const passengers = (carState[carId]||[]);
+  if(!carState.pool) carState.pool=[];
+  passengers.forEach(pid=>{ if(pid!==car.driver) carState.pool.push(pid); });
+  delete carState[carId];
+  CARS = CARS.filter(c=>c.id!==carId);
+  markUnsaved(); renderManage(); render();
+  if(!silent) showToast(`🗑 Car removed. Passengers moved to Unassigned pool.`);
+}
+
+function moveCar(carId, dir){
+  const idx = CARS.findIndex(c=>c.id===carId);
+  const newIdx = idx+dir;
+  if(newIdx<0||newIdx>=CARS.length) return;
+  [CARS[idx],CARS[newIdx]]=[CARS[newIdx],CARS[idx]];
+  markUnsaved(); renderManage(); renderTravel();
+}
+
+function refreshCarDriverSelect(){
+  const sel = document.getElementById('cv-driver');
+  const cur = sel.value;
+  sel.innerHTML='<option value="">— select from members —</option>';
+  PEOPLE.filter(p=>p.travel==='Car (Driver)'||p.travel==='Car (own)').forEach(p=>{
+    const opt=document.createElement('option');
+    opt.value=p.id; opt.textContent=`${p.name} (${p.loc})`;
+    sel.appendChild(opt);
+  });
+  // also allow any person as driver
+  const sep=document.createElement('option'); sep.disabled=true; sep.textContent='── All members ──'; sel.appendChild(sep);
+  PEOPLE.forEach(p=>{
+    const opt=document.createElement('option');
+    opt.value=p.id; opt.textContent=`${p.name} (${p.loc})`;
+    sel.appendChild(opt);
+  });
+  sel.value=cur||'';
+}
+
+// ── EDIT STATE ────────────────────────────────────────────────
+let editingPersonId = null;  // null = add mode, number = edit mode
+let editingCarId    = null;
+
+function loadPersonIntoForm(id){
+  const p = PEOPLE.find(x=>x.id===id);
+  if(!p) return;
+  editingPersonId = id;
+  document.getElementById('pm-name').value    = p.name;
+  document.getElementById('pm-email').value   = p.email||'';
+  document.getElementById('pm-loc').value     = p.loc;
+  document.getElementById('pm-travel').value  = p.travel;
+  document.getElementById('pm-stay').value    = p.stay;
+  document.getElementById('pm-food').value    = p.food;
+  document.getElementById('pm-priority').value= '';
+  document.getElementById('pm-car-wrap').style.display = p.travel==='Car (Driver)'?'':'none';
+  if(p.travel==='Car (Driver)'){
+    const car=CARS.find(c=>c.driver===id);
+    document.getElementById('pm-carseats').value = car ? car.totalSeats : 4;
+  }
+  // Switch button & heading
+  document.getElementById('pm-add-btn').textContent  = '💾 Update Member';
+  document.getElementById('pm-add-btn').style.background = '#7c5cd8';
+  document.getElementById('pm-cancel-btn').style.display = '';
+  document.getElementById('pm-form-title').textContent   = `✏️ Editing: ${p.name}`;
+  // Highlight the row
+  document.querySelectorAll('.list-row.editing').forEach(r=>r.classList.remove('editing'));
+  const rows=[...document.querySelectorAll('#people-list .list-row')];
+  const idx=PEOPLE.findIndex(x=>x.id===id);
+  if(rows[idx]) rows[idx].classList.add('editing');
+  document.getElementById('pm-name').focus();
+  document.getElementById('pm-form-title').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function cancelEditPerson(){
+  editingPersonId=null;
+  ['pm-name','pm-email','pm-loc','pm-priority'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('pm-travel').value='Carpool';
+  document.getElementById('pm-stay').value='Overnight';
+  document.getElementById('pm-food').value='Non Veg';
+  document.getElementById('pm-car-wrap').style.display='none';
+  document.getElementById('pm-add-btn').textContent='➕ Add Member';
+  document.getElementById('pm-add-btn').style.background='#3b82d4';
+  document.getElementById('pm-cancel-btn').style.display='none';
+  document.getElementById('pm-form-title').textContent='👤 Add New Member';
+  document.querySelectorAll('.list-row.editing').forEach(r=>r.classList.remove('editing'));
+}
+
+function savePersonEdit(){
+  const id = editingPersonId;
+  const p  = PEOPLE.find(x=>x.id===id);
+  if(!p) return;
+  const name  = document.getElementById('pm-name').value.trim();
+  const loc   = document.getElementById('pm-loc').value.trim();
+  const travel= document.getElementById('pm-travel').value;
+  const stay  = document.getElementById('pm-stay').value;
+  const food  = document.getElementById('pm-food').value;
+  if(!name||!loc){ alert('Name and Location are required.'); return; }
+
+  const oldTravel = p.travel;
+  p.name=name; p.loc=loc; p.travel=travel; p.stay=stay; p.food=food;
+
+  // If changed to/from Car Driver, handle car creation/removal
+  if(travel==='Car (Driver)' && oldTravel!=='Car (Driver)'){
+    const seats=parseInt(document.getElementById('pm-carseats').value)||4;
+    const idx=CARS.length%CAR_COLORS.length;
+    const newCar={id:nextCarId(),driver:id,label:name,emoji:'🚗',
+                  color:CAR_COLORS[idx],bg:CAR_BGS[idx],totalSeats:seats,zone:loc};
+    CARS.push(newCar);
+    removeFromAllCar(id);
+    carState[newCar.id]=[id];
+  } else if(travel!=='Car (Driver)' && oldTravel==='Car (Driver)'){
+    const driverCar=CARS.find(c=>c.driver===id);
+    if(driverCar) removeCar(driverCar.id, true);
+  } else if(travel==='Car (Driver)'){
+    // Update seats and label on existing car
+    const car=CARS.find(c=>c.driver===id);
+    if(car){
+      const seats=parseInt(document.getElementById('pm-carseats').value)||car.totalSeats;
+      car.totalSeats=seats; car.label=name; car.zone=loc;
+    }
+  }
+
+  // If stay changed, update room pools
+  if(stay==='Day'){
+    for(const k of Object.keys(roomState)) if(k!=='daytrip-pool') roomState[k]=roomState[k].filter(x=>x!==id);
+    if(!roomState['daytrip-pool']) roomState['daytrip-pool']=[];
+    if(!roomState['daytrip-pool'].includes(id)) roomState['daytrip-pool'].push(id);
+  }
+
+  cancelEditPerson();
+  markUnsaved(); renderManage(); render();
+  showToast(`✅ ${name} updated.`);
+}
+
+// ── EDIT CAR ──────────────────────────────────────────────────
+function loadCarIntoForm(carId){
+  const car=CARS.find(c=>c.id===carId); if(!car) return;
+  editingCarId=carId;
+  document.getElementById('cv-driver').value = car.driver;
+  document.getElementById('cv-zone').value   = car.zone;
+  document.getElementById('cv-seats').value  = car.totalSeats;
+  document.getElementById('cv-emoji').value  = car.emoji;
+  document.getElementById('cv-priority').value='';
+  document.getElementById('cv-add-btn').textContent  = '💾 Update Vehicle';
+  document.getElementById('cv-add-btn').style.background = '#7c5cd8';
+  document.getElementById('cv-cancel-btn').style.display = '';
+  document.getElementById('cv-form-title').textContent   = `✏️ Editing: ${car.label}`;
+  document.querySelectorAll('#cars-list .list-row.editing').forEach(r=>r.classList.remove('editing'));
+  const rows=[...document.querySelectorAll('#cars-list .list-row')];
+  const idx=CARS.findIndex(c=>c.id===carId);
+  if(rows[idx]) rows[idx].classList.add('editing');
+  document.getElementById('cv-zone').focus();
+  document.getElementById('cv-form-title').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function cancelEditCar(){
+  editingCarId=null;
+  document.getElementById('cv-driver').value='';
+  document.getElementById('cv-zone').value='';
+  document.getElementById('cv-seats').value='';
+  document.getElementById('cv-emoji').value='🚗';
+  document.getElementById('cv-priority').value='';
+  document.getElementById('cv-add-btn').textContent='➕ Add Vehicle';
+  document.getElementById('cv-add-btn').style.background='#3b82d4';
+  document.getElementById('cv-cancel-btn').style.display='none';
+  document.getElementById('cv-form-title').textContent='🚗 Add New Vehicle';
+  document.querySelectorAll('#cars-list .list-row.editing').forEach(r=>r.classList.remove('editing'));
+}
+
+function saveCarEdit(){
+  const car=CARS.find(c=>c.id===editingCarId); if(!car) return;
+  const driverId=parseInt(document.getElementById('cv-driver').value);
+  const zone    =document.getElementById('cv-zone').value.trim();
+  const seats   =parseInt(document.getElementById('cv-seats').value);
+  const emoji   =document.getElementById('cv-emoji').value;
+  if(!driverId||!zone||!seats){ alert('All fields required.'); return; }
+  const driver=PEOPLE.find(p=>p.id===driverId);
+  if(!driver){ alert('Driver not found.'); return; }
+  car.driver=driverId; car.label=driver.name; car.zone=zone;
+  car.totalSeats=seats; car.emoji=emoji;
+  // Move new driver into this car
+  removeFromAllCar(driverId);
+  if(!carState[car.id]) carState[car.id]=[];
+  if(!carState[car.id].includes(driverId)) carState[car.id].unshift(driverId);
+  cancelEditCar();
+  markUnsaved(); renderManage(); render();
+  showToast(`✅ Vehicle updated.`);
+}
+
+// ── UNIFIED SUBMIT (add vs edit) ──────────────────────────────
+function submitPerson(){ editingPersonId!==null ? savePersonEdit() : addPerson(); }
+function submitCar()   { editingCarId   !==null ? saveCarEdit()    : addCar();    }
+
+function renderManage(){
+  // People list
+  const pl=document.getElementById('people-list'); pl.innerHTML='';
+  document.getElementById('people-count-badge').textContent=PEOPLE.length+' people';
+  PEOPLE.forEach((p,i)=>{
+    const row=document.createElement('div'); row.className='list-row';
+    const isEditing=(editingPersonId===p.id);
+    if(isEditing) row.classList.add('editing');
+    const travelIcon={Bike:'🏍️','Car (Driver)':'🚗','Car (own)':'🚗',Carpool:'🤝'}[p.travel]||'🚗';
+    const stayTag=p.stay==='Overnight'?'🌙':'☀️';
+    const foodTag=p.food==='Veg'?'<span style="color:#166534;font-weight:700">🥗</span>':'<span style="color:#991b1b;font-weight:700">🍗</span>';
+    row.innerHTML=`
+      <div class="list-num" style="background:${acol(p.id)}">${p.id}</div>
+      <div style="flex:1;min-width:0">
+        <div class="list-name">${p.name}</div>
+        <div class="list-meta">${p.loc} · ${travelIcon} ${p.travel} · ${stayTag} ${p.stay} · ${foodTag}</div>
+      </div>
+      <button class="edit-btn" onclick="loadPersonIntoForm(${p.id})" title="Edit">✏️</button>
+      <button class="move-btn" onclick="movePerson(${p.id},-1)" title="Move up" ${i===0?'disabled':''}>▲</button>
+      <button class="move-btn" onclick="movePerson(${p.id},1)"  title="Move down" ${i===PEOPLE.length-1?'disabled':''}>▼</button>
+      <button class="del-btn"  onclick="removePerson(${p.id})">✕</button>`;
+    pl.appendChild(row);
+  });
+
+  // Cars list
+  const cl=document.getElementById('cars-list'); cl.innerHTML='';
+  document.getElementById('cars-count-badge').textContent=CARS.length+' vehicles';
+  CARS.forEach((c,i)=>{
+    const isEditing=(editingCarId===c.id);
+    const occ=(carState[c.id]||[]).length;
+    const row=document.createElement('div'); row.className='list-row';
+    if(isEditing) row.classList.add('editing');
+    row.innerHTML=`
+      <div style="width:28px;height:28px;border-radius:7px;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${c.emoji}</div>
+      <div style="flex:1;min-width:0">
+        <div class="list-name">${c.label} <span class="pri-badge">#${i+1}</span></div>
+        <div class="list-meta">${c.zone} · ${c.totalSeats+1} seats · ${occ} assigned</div>
+      </div>
+      <button class="edit-btn" onclick="loadCarIntoForm('${c.id}')" title="Edit">✏️</button>
+      <button class="move-btn" onclick="moveCar('${c.id}',-1)" title="Move up"   ${i===0?'disabled':''}>▲</button>
+      <button class="move-btn" onclick="moveCar('${c.id}',1)"  title="Move down" ${i===CARS.length-1?'disabled':''}>▼</button>
+      <button class="del-btn"  onclick="removeCar('${c.id}')">✕</button>`;
+    cl.appendChild(row);
+  });
+
+  refreshCarDriverSelect();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){ t=document.createElement('div'); t.id='toast';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2328;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:opacity .3s';
+    document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._t); t._t=setTimeout(()=>t.style.opacity='0',3000);
+}
+
+init();
+</script>
+</body>
+</html>
