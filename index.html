@@ -82,11 +82,11 @@ body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;ba
   </div>
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
     <div class="stats-row">
-      <div class="stat"><div class="stat-val">31</div><div class="stat-lbl">Total</div></div>
-      <div class="stat"><div class="stat-val">26</div><div class="stat-lbl">Overnight</div></div>
+      <div class="stat"><div class="stat-val">35</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-val">30</div><div class="stat-lbl">Overnight</div></div>
       <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Day Trip</div></div>
-      <div class="stat"><div class="stat-val">7</div><div class="stat-lbl">🥗 Veg</div></div>
-      <div class="stat"><div class="stat-val">24</div><div class="stat-lbl">🍗 Non-Veg</div></div>
+      <div class="stat"><div class="stat-val">9</div><div class="stat-lbl">🥗 Veg</div></div>
+      <div class="stat"><div class="stat-val">26</div><div class="stat-lbl">🍗 Non-Veg</div></div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
       <span style="background:#393939;color:#8d8d8d;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700">👁 View Only</span>
@@ -151,17 +151,17 @@ body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;ba
 <!-- SUMMARY -->
 <div id="tab-summary" class="panel">
   <div class="summary-grid">
-    <div class="s-card blue"><div class="s-val">31</div><div class="s-lbl">Total Attendees</div></div>
-    <div class="s-card green"><div class="s-val">26</div><div class="s-lbl">Overnight</div></div>
+    <div class="s-card blue"><div class="s-val">35</div><div class="s-lbl">Total Attendees</div></div>
+    <div class="s-card green"><div class="s-val">30</div><div class="s-lbl">Overnight</div></div>
     <div class="s-card orange"><div class="s-val">5</div><div class="s-lbl">Day Trip</div></div>
-    <div class="s-card purple"><div class="s-val">7</div><div class="s-lbl">🥗 Veg</div></div>
-    <div class="s-card red"><div class="s-val">24</div><div class="s-lbl">🍗 Non-Veg</div></div>
-    <div class="s-card blue"><div class="s-val">5</div><div class="s-lbl">Cars (rides)</div></div>
+    <div class="s-card purple"><div class="s-val">9</div><div class="s-lbl">🥗 Veg</div></div>
+    <div class="s-card red"><div class="s-val">26</div><div class="s-lbl">🍗 Non-Veg</div></div>
+    <div class="s-card blue"><div class="s-val">6</div><div class="s-lbl">Cars (rides)</div></div>
     <div class="s-card orange"><div class="s-val">10</div><div class="s-lbl">Bike Riders</div></div>
-    <div class="s-card green"><div class="s-val">15</div><div class="s-lbl">Need Carpool</div></div>
-    <div class="s-card purple"><div class="s-val">17</div><div class="s-lbl">Car Seats Available</div></div>
+    <div class="s-card green"><div class="s-val">19</div><div class="s-lbl">Need Carpool</div></div>
+    <div class="s-card purple"><div class="s-val">21</div><div class="s-lbl">Car Seats Available</div></div>
   </div>
-  <div class="section-head"><h2>👥 All 31 Team Members</h2></div>
+  <div class="section-head"><h2>👥 All 35 Team Members</h2></div>
   <div class="people-table">
     <table><thead><tr><th>#</th><th>Name</th><th>Location</th><th>Travel</th><th>Stay</th><th>Food</th></tr></thead>
     <tbody id="people-tbody"></tbody></table>
@@ -206,6 +206,10 @@ const PEOPLE = [
   {id:29,name:"Santhosh N R",               loc:"Marathahalli",                   travel:"Bike",        stay:"Overnight",food:"Non Veg"},
   {id:30,name:"Shruthi Poldas",             loc:"Sarjapur",                       travel:"Carpool",     stay:"Overnight",food:"Veg"},
   {id:31,name:"Venktesh Kumar",             loc:"Munnekolala",                    travel:"Bike",        stay:"Day",      food:"Non Veg"},
+  {id:32,name:"Shreekar Puranik",           loc:"Office → Satheesh's car",        travel:"Carpool",     stay:"Overnight",food:"Veg"},
+  {id:33,name:"Swetha M",                   loc:"Kadubeesanahalli",               travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:34,name:"Anand Gotluri",              loc:"Hebbal",                         travel:"Carpool",     stay:"Overnight",food:"Non Veg"},
+  {id:35,name:"Kanwaldeep Saluja",          loc:"Indiranagar route",              travel:"Car (Driver)",stay:"Overnight",food:"Non Veg"},
 ];
 
 const CARS = [
@@ -214,6 +218,7 @@ const CARS = [
   {id:"car3",driver:22,label:"Ranjit Dash",         emoji:"🚙",color:"#f59e0b",bg:"#fef3c7",totalSeats:2,zone:"Kodathi / Carmelaram"},
   {id:"car4",driver:26,label:"Biswajit Bhuyan",     emoji:"🚙",color:"#22c55e",bg:"#dcfce7",totalSeats:3,zone:"Electronic City Ph1 (Day)"},
   {id:"car5",driver:27,label:"Satheesh K Dominic",  emoji:"🚐",color:"#ef4444",bg:"#fee2e2",totalSeats:3,zone:"Carmelaram / East Bangalore"},
+  {id:"car6",driver:35,label:"Kanwaldeep Saluja",   emoji:"🚗",color:"#14b8a6",bg:"#ccfbf1",totalSeats:3,zone:"Indiranagar / North Bangalore"},
 ];
 
 const ROOM_TYPES = [
