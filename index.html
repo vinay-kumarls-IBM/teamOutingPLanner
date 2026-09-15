@@ -341,18 +341,22 @@ function showTab(name,btn){
   btn.classList.add('active');
 }
 
-// ── FETCH PLAN FROM GITHUB RAW ───────────────────────────────
-// plan.json is a public file in the same repo — no token needed
-const PLAN_URL = 'https://raw.githubusercontent.com/vinay-kumarls-IBM/teamOutingPLanner/main/plan.json';
+// ── FETCH PLAN FROM GITHUB CONTENTS API ──────────────────────
+// Using the Contents API (not raw CDN) so we always get the live file.
+// raw.githubusercontent.com caches aggressively and ignores ?t= cache-busting.
+const PLAN_API = 'https://api.github.com/repos/vinay-kumarls-IBM/teamOutingPLanner/contents/plan.json?ref=main';
 
 async function init(){
   document.getElementById('hdr-sub').textContent = '🔄 Loading latest plan…';
   document.getElementById('save-ts').textContent = '';
   try {
-    // Cache-bust so viewers always get the freshest version
-    const res = await fetch(PLAN_URL + '?t=' + Date.now());
+    // Contents API always returns the live committed file — no CDN cache
+    const res = await fetch(PLAN_API, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
     if(!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
+    const meta = await res.json();
+    const data = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
     carState  = data.car  || {};
     roomState = data.room || {};
     const ts = data.savedAt ? new Date(data.savedAt).toLocaleString() : '—';
