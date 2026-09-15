@@ -357,8 +357,10 @@ async function init(){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const meta = await res.json();
     const data = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
-    carState  = data.car  || {};
-    roomState = data.room || {};
+    carState  = data.car    || {};
+    roomState = data.room   || {};
+    if(data.people && data.people.length) PEOPLE = data.people;
+    if(data.cars   && data.cars.length)   CARS   = data.cars;
     const ts = data.savedAt ? new Date(data.savedAt).toLocaleString() : '—';
     document.getElementById('hdr-sub').textContent  = '👁 View-only — plan loaded from GitHub';
     document.getElementById('save-ts').textContent  = 'Last updated: ' + ts;
