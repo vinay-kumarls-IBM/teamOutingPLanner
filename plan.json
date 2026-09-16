@@ -8,7 +8,6 @@
     "car2": [
       13,
       3,
-      8,
       33
     ],
     "car3": [
@@ -33,9 +32,7 @@
       9,
       17
     ],
-    "pool": [
-      14
-    ],
+    "pool": [],
     "car7": [
       25,
       10
@@ -53,7 +50,6 @@
       12
     ],
     "premium3": [
-      8,
       19,
       28
     ],
@@ -68,7 +64,6 @@
       15
     ],
     "premium6": [
-      14,
       5
     ],
     "deluxe1": [
@@ -155,14 +150,6 @@
       "food": "Non Veg"
     },
     {
-      "id": 8,
-      "name": "Baijnath Kumar",
-      "loc": "Balagere Road",
-      "travel": "Carpool",
-      "stay": "Overnight",
-      "food": "Non Veg"
-    },
-    {
       "id": 9,
       "name": "Giridhar Panuganti",
       "loc": "HSR Layout",
@@ -201,14 +188,6 @@
       "travel": "Car (Driver)",
       "stay": "Overnight",
       "food": "Non Veg"
-    },
-    {
-      "id": 14,
-      "name": "Chirag Agarwal",
-      "loc": "Murugeshpalaya / HAL",
-      "travel": "Carpool",
-      "stay": "Overnight",
-      "food": "Veg"
     },
     {
       "id": 15,
@@ -443,5 +422,5 @@
       "zone": "Office"
     }
   ],
-  "savedAt": "2026-09-16T06:58:14.081Z"
+  "savedAt": "2026-09-16T07:02:40.865Z"
 }
