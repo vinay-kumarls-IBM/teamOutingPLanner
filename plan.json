@@ -393,7 +393,8 @@
   "room": {
     "premium1": [
       13,
-      27
+      27,
+      36
     ],
     "premium2": [
       34,
@@ -442,9 +443,7 @@
       26,
       31
     ],
-    "room-unassigned": [
-      36
-    ]
+    "room-unassigned": []
   },
-  "savedAt": "2026-09-16T08:44:13.319Z"
+  "savedAt": "2026-09-16T08:44:29.533Z"
 }
