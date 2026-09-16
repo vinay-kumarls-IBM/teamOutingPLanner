@@ -349,6 +349,16 @@
       "bg": "#ccfbf1",
       "totalSeats": 3,
       "zone": "Indiranagar / North Bangalore"
+    },
+    {
+      "id": "car7",
+      "driver": 25,
+      "label": "Bhaskar Bhattarai",
+      "emoji": "🚗",
+      "color": "#8b5cf6",
+      "bg": "#ede9fe",
+      "totalSeats": 5,
+      "zone": "Sarjapur"
     }
   ],
   "car": {
@@ -386,8 +396,7 @@
     ],
     "pool": [],
     "car7": [
-      25,
-      10
+      25
     ]
   },
   "room": {
@@ -445,5 +454,5 @@
     ],
     "room-unassigned": []
   },
-  "savedAt": "2026-09-16T08:44:29.533Z"
+  "savedAt": "2026-09-16T08:58:02.436Z"
 }
