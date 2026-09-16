@@ -341,22 +341,18 @@ function showTab(name,btn){
   btn.classList.add('active');
 }
 
-// ── FETCH PLAN FROM GITHUB CONTENTS API ──────────────────────
-// Using the Contents API (not raw CDN) so we always get the live file.
-// raw.githubusercontent.com caches aggressively and ignores ?t= cache-busting.
-const PLAN_API = 'https://api.github.com/repos/vinay-kumarls-IBM/teamOutingPLanner/contents/plan.json?ref=main';
+// ── FETCH PLAN FROM RAW GITHUB (no auth, no rate-limit) ──────
+// raw.githubusercontent.com with a timestamp cache-buster — no GitHub token
+// needed, no 60-req/hr rate limit, works for every visitor.
+const PLAN_RAW = 'https://raw.githubusercontent.com/vinay-kumarls-IBM/teamOutingPLanner/main/plan.json';
 
 async function init(){
   document.getElementById('hdr-sub').textContent = '🔄 Loading latest plan…';
   document.getElementById('save-ts').textContent = '';
   try {
-    // Contents API always returns the live committed file — no CDN cache
-    const res = await fetch(PLAN_API, {
-      headers: { 'Accept': 'application/vnd.github.v3+json' }
-    });
+    const res = await fetch(PLAN_RAW + '?t=' + Date.now());
     if(!res.ok) throw new Error('HTTP '+res.status);
-    const meta = await res.json();
-    const data = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
+    const data = await res.json();
     carState  = data.car    || {};
     roomState = data.room   || {};
     if(data.people && data.people.length) PEOPLE = data.people;
