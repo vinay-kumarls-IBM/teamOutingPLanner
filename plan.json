@@ -41,35 +41,35 @@
   "room": {
     "premium1": [
       13,
-      25,
-      7
+      27
     ],
     "premium2": [
-      27,
-      22,
-      12
+      34,
+      35,
+      7
     ],
     "premium3": [
       19,
-      28
+      20,
+      22
     ],
     "premium4": [
-      20,
-      4,
-      17
+      17,
+      28
     ],
     "premium5": [
       10,
-      2,
-      15
+      32
     ],
     "premium6": [
-      5
+      23,
+      2,
+      6
     ],
     "deluxe1": [
-      32,
-      34,
-      35
+      12,
+      4,
+      5
     ],
     "deluxe2": [
       3,
@@ -78,12 +78,11 @@
       24
     ],
     "villa1": [
-      6,
       11,
-      16,
-      23,
       29,
-      9
+      9,
+      25,
+      15
     ],
     "daytrip-pool": [
       1,
@@ -194,14 +193,6 @@
       "name": "Amit Bevinakatti",
       "loc": "Kumbalgodu / Mysuru Rd",
       "travel": "Carpool",
-      "stay": "Overnight",
-      "food": "Non Veg"
-    },
-    {
-      "id": 16,
-      "name": "Rakesh Mandala",
-      "loc": "Kundalahalli",
-      "travel": "Bike",
       "stay": "Overnight",
       "food": "Non Veg"
     },
@@ -422,5 +413,5 @@
       "zone": "Office"
     }
   ],
-  "savedAt": "2026-09-16T07:06:13.921Z"
+  "savedAt": "2026-09-16T07:17:30.265Z"
 }
