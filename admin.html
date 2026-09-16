@@ -393,8 +393,14 @@ async function submitToken(){
     const meta = await res.json();
     currentFileSHA = meta.sha;
     const decoded = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,'')))));
+    if(decoded.people && decoded.people.length) PEOPLE = decoded.people;
+    if(decoded.cars   && decoded.cars.length)   CARS   = decoded.cars;
     carState  = decoded.car  || JSON.parse(JSON.stringify(DEFAULT_STATE.car));
     roomState = decoded.room || JSON.parse(JSON.stringify(DEFAULT_STATE.room));
+    // Strip any ids that no longer exist in PEOPLE (stale ghost entries)
+    const knownIds = new Set(PEOPLE.map(p=>p.id));
+    for(const k of Object.keys(carState))  carState[k]  = carState[k].filter(id=>knownIds.has(id));
+    for(const k of Object.keys(roomState)) roomState[k] = roomState[k].filter(id=>knownIds.has(id));
     const ts = decoded.savedAt ? new Date(decoded.savedAt).toLocaleString() : '—';
     setSaveStatus(`Loaded · Last saved: ${ts}`);
     document.getElementById('hdr-sub').textContent = 'Admin mode · Drag to rearrange · Click 💾 Save to GitHub to publish';
