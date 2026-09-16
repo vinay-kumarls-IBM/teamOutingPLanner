@@ -216,6 +216,10 @@ body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;ba
       <div style="margin-left:auto;text-align:right"><div style="font-size:18px;font-weight:700;color:#22c55e">6</div><div style="font-size:10px;color:#57606a">total pax</div></div>
     </div>
   </div>
+  <div class="pool-card" id="room-unassigned-wrap" style="display:none">
+    <div class="pool-head">🔄 Unassigned (Overnight) &nbsp;<span id="room-unassigned-count" style="background:#fee2e2;color:#991b1b;border-radius:12px;padding:2px 9px;font-size:11px;font-weight:600"></span></div>
+    <div class="pool-drop" id="room-unassigned-pool" style="flex-direction:column;gap:5px"></div>
+  </div>
   <div class="section-head"><h2>🛏️ Room Allocation — 9 rooms · 26 overnight guests · 32 capacity</h2></div>
   <div class="room-grid" id="room-grid"></div>
   <div class="section-head" style="margin-top:22px"><h2>☀️ Day Trip (No Room Needed) — 5 people</h2></div>
@@ -564,6 +568,17 @@ function renderTravel(){
 }
 
 function renderRooms(){
+  // Unassigned overnight pool
+  const unassignedIds = roomState['room-unassigned']||[];
+  const ruWrap = document.getElementById('room-unassigned-wrap');
+  ruWrap.style.display = unassignedIds.length ? '' : 'none';
+  if(unassignedIds.length){
+    document.getElementById('room-unassigned-count').textContent = unassignedIds.length + ' unassigned';
+    const ruPool = document.getElementById('room-unassigned-pool'); ruPool.innerHTML='';
+    setupDrop(ruPool,'room-unassigned','room');
+    unassignedIds.forEach(pid=>{const p=byId(pid);if(p)ruPool.appendChild(makeRow(p));});
+  }
+
   const grid=document.getElementById('room-grid'); grid.innerHTML='';
   for(const room of ROOMS){
     const occ=roomState[room.id]||[], used=occ.length, total=room.capacity, free=Math.max(0,total-used);
@@ -690,13 +705,20 @@ function addPerson(){
     refreshCarDriverSelect();
   }
 
-  // Add to pool or daytrip based on stay
+  // Travel: only carpool-seekers go into the unassigned car pool; Bike riders are independent
+  if(travel==='Carpool'){
+    if(!carState.pool) carState.pool=[];
+    carState.pool.push(id);
+  }
+
+  // Room: Day-trippers go to daytrip-pool; Overnight people go to room unassigned pool
   if(stay==='Day'){
     if(!roomState['daytrip-pool']) roomState['daytrip-pool']=[];
     roomState['daytrip-pool'].push(id);
   } else {
-    if(!carState.pool) carState.pool=[];
-    carState.pool.push(id);
+    // Add to first room with a free slot, or create a room-unassigned entry
+    if(!roomState['room-unassigned']) roomState['room-unassigned']=[];
+    roomState['room-unassigned'].push(id);
   }
 
   // Clear form
