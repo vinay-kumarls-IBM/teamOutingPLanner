@@ -172,6 +172,7 @@ body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;ba
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('travel',this)">🚗 Travel Plan</button>
   <button class="tab-btn" onclick="showTab('rooms',this)">🛏️ Room Allotment</button>
+  <button class="tab-btn" onclick="showTab('food',this)">🍽️ Food Menu</button>
   <button class="tab-btn" onclick="showTab('manage',this)">⚙️ Manage</button>
   <button class="tab-btn" onclick="showTab('summary',this)">📊 Summary</button>
 </div>
@@ -225,6 +226,70 @@ body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;ba
   <div class="section-head" style="margin-top:22px"><h2>☀️ Day Trip (No Room Needed) — 5 people</h2></div>
   <div class="pool-card">
     <div class="pool-drop" id="daytrip-pool" style="gap:5px;flex-direction:column"></div>
+  </div>
+</div>
+
+<!-- FOOD MENU -->
+<div id="tab-food" class="panel">
+  <div class="info-banner" style="background:#fef9c3;border-color:#fde68a;color:#854d0e">✏️ <span>Food menu is view-only — edit directly in the HTML if items change. <span style="color:#166534;font-weight:700">Green</span> = veg · <span style="color:#991b1b;font-weight:700">Red</span> = non-veg · <strong>Bold</strong> = must-try highlight.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px">
+
+    <!-- Welcome Drink -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+      <div style="background:#0f62fe;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;letter-spacing:.4px">🥤 WELCOME DRINK</div>
+      <div style="padding:10px 0">
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Lemon Or Similar</div>
+      </div>
+    </div>
+
+    <!-- Hi Tea -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+      <div style="background:#0f62fe;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;letter-spacing:.4px">☕ HI TEA</div>
+      <div style="padding:10px 0">
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Tea</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Coffee</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Onion Pokora</div>
+        <div style="padding:7px 16px;font-size:13px;color:#166534">Biscuits</div>
+      </div>
+    </div>
+
+    <!-- Breakfast -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+      <div style="background:#0f62fe;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;letter-spacing:.4px">🌅 BREAKFAST</div>
+      <div style="padding:10px 0">
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Tea</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Coffee</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Cut Fruits</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Bread &amp; Jam</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Hot Milk &amp; Cornflakes</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534;font-weight:700">Vada</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534;font-weight:700">Idly</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Sambar</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Chutneys (Coconut &amp; Tomato)</div>
+        <div style="padding:7px 16px;font-size:13px;color:#166534;font-weight:700">Pongal</div>
+      </div>
+    </div>
+
+    <!-- Dinner -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+      <div style="background:#0f62fe;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;letter-spacing:.4px">🌙 DINNER</div>
+      <div style="padding:10px 0">
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Chappathi / Phulka</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Jeera Rice / Lemon Rice</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">White Rice</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534;font-weight:700">Mixed Veg Curry</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534;font-weight:700">Aloo Gobi / Beans Poriyal</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#991b1b;font-weight:700">Chicken Chettinad</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#991b1b;font-weight:700">Chicken Chilly</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Sambar</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Rasam</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Curd</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Pickle</div>
+        <div style="padding:7px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#166534">Pappad</div>
+        <div style="padding:7px 16px;font-size:13px;color:#0f62fe;font-weight:700">Ice Cream Or G.Jamun</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
