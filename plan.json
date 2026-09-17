@@ -137,14 +137,6 @@
       "food": "Non Veg"
     },
     {
-      "id": 18,
-      "name": "Arnab Ghosh",
-      "loc": "Marathahalli",
-      "travel": "Bike",
-      "stay": "Day",
-      "food": "Non Veg"
-    },
-    {
       "id": 19,
       "name": "Aditya Saurabh",
       "loc": "Near IIM",
@@ -257,14 +249,6 @@
       "food": "Veg"
     },
     {
-      "id": 33,
-      "name": "Swetha M",
-      "loc": "Kadubeesanahalli",
-      "travel": "Carpool",
-      "stay": "Overnight",
-      "food": "Non Veg"
-    },
-    {
       "id": 34,
       "name": "Anand Gotluri",
       "loc": "Hebbal",
@@ -292,6 +276,14 @@
       "id": 37,
       "name": "Peermahamad",
       "loc": "Office",
+      "travel": "Carpool",
+      "stay": "Overnight",
+      "food": "Non Veg"
+    },
+    {
+      "id": 38,
+      "name": "Shanthi Marthala",
+      "loc": "Electronic City 2",
       "travel": "Carpool",
       "stay": "Overnight",
       "food": "Non Veg"
@@ -373,13 +365,11 @@
     "car1": [
       7,
       15,
-      17,
-      37
+      17
     ],
     "car2": [
       13,
-      3,
-      33
+      3
     ],
     "car3": [
       22,
@@ -388,7 +378,8 @@
       30
     ],
     "car4": [
-      26
+      26,
+      38
     ],
     "car5": [
       27,
@@ -401,7 +392,8 @@
       35,
       34,
       9,
-      4
+      4,
+      37
     ],
     "pool": [],
     "car7": [
@@ -449,7 +441,6 @@
     "deluxe2": [
       3,
       30,
-      33,
       24
     ],
     "villa1": [
@@ -460,10 +451,11 @@
     ],
     "daytrip-pool": [
       1,
-      31,
-      18
+      31
     ],
-    "room-unassigned": []
+    "room-unassigned": [
+      38
+    ]
   },
-  "savedAt": "2026-09-17T05:11:17.629Z"
+  "savedAt": "2026-09-17T10:34:06.126Z"
 }
