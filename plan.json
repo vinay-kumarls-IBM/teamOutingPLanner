@@ -89,14 +89,6 @@
       "food": "Non Veg"
     },
     {
-      "id": 14,
-      "name": "Chirag Agarwal",
-      "loc": "Murugeshpalaya / HAL",
-      "travel": "Carpool",
-      "stay": "Overnight",
-      "food": "Veg"
-    },
-    {
       "id": 15,
       "name": "Amit Bevinakatti",
       "loc": "Kumbalgodu / Mysuru Rd",
@@ -412,5 +404,5 @@
     ],
     "room-unassigned": []
   },
-  "savedAt": "2026-09-17T17:21:25.119Z"
+  "savedAt": "2026-09-17T17:21:45.153Z"
 }
