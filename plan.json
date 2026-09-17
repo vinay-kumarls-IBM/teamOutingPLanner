@@ -137,14 +137,6 @@
       "food": "Non Veg"
     },
     {
-      "id": 21,
-      "name": "Ganga Raghu",
-      "loc": "AECS Layout / Brookfield",
-      "travel": "Carpool",
-      "stay": "Day",
-      "food": "Veg"
-    },
-    {
       "id": 22,
       "name": "Ranjit Dash",
       "loc": "Kodathi",
@@ -181,7 +173,7 @@
       "name": "Biswajit Bhuyan",
       "loc": "Electronic City Phase 1",
       "travel": "Car (Driver)",
-      "stay": "Day",
+      "stay": "Overnight",
       "food": "Non Veg"
     },
     {
@@ -304,7 +296,7 @@
       "color": "#22c55e",
       "bg": "#dcfce7",
       "totalSeats": 3,
-      "zone": "Electronic City Ph1 (Day)"
+      "zone": "Electronic City Phase 1"
     },
     {
       "id": "car5",
@@ -428,5 +420,5 @@
     ],
     "room-unassigned": []
   },
-  "savedAt": "2026-09-17T16:58:03.046Z"
+  "savedAt": "2026-09-17T17:04:06.581Z"
 }
