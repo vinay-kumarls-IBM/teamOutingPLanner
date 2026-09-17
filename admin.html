@@ -153,11 +153,11 @@ body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;ba
   </div>
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
     <div class="stats-row">
-      <div class="stat"><div class="stat-val">35</div><div class="stat-lbl">Total</div></div>
-      <div class="stat"><div class="stat-val">30</div><div class="stat-lbl">Overnight</div></div>
-      <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Day Trip</div></div>
-      <div class="stat"><div class="stat-val">9</div><div class="stat-lbl">🥗 Veg</div></div>
-      <div class="stat"><div class="stat-val">26</div><div class="stat-lbl">🍗 Non-Veg</div></div>
+      <div class="stat"><div class="stat-val" id="hdr-total">35</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-val" id="hdr-overnight">30</div><div class="stat-lbl">Overnight</div></div>
+      <div class="stat"><div class="stat-val" id="hdr-day">5</div><div class="stat-lbl">Day Trip</div></div>
+      <div class="stat"><div class="stat-val" id="hdr-veg">9</div><div class="stat-lbl">🥗 Veg</div></div>
+      <div class="stat"><div class="stat-val" id="hdr-nonveg">26</div><div class="stat-lbl">🍗 Non-Veg</div></div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
       <div style="display:flex;gap:8px;align-items:center">
@@ -673,6 +673,18 @@ function renderSummaryTable(){
   const bikers = PEOPLE.filter(p=>p.travel==='Bike').length;
   const carpool = PEOPLE.filter(p=>p.travel==='Carpool').length;
   const totalSeats = CARS.reduce((sum,c)=>sum+(c.totalSeats||0),0);
+
+  // Update header stats
+  const hdrTotal = document.getElementById('hdr-total');
+  const hdrOvernight = document.getElementById('hdr-overnight');
+  const hdrDay = document.getElementById('hdr-day');
+  const hdrVeg = document.getElementById('hdr-veg');
+  const hdrNonveg = document.getElementById('hdr-nonveg');
+  if(hdrTotal)    hdrTotal.textContent    = total;
+  if(hdrOvernight)hdrOvernight.textContent= overnight;
+  if(hdrDay)      hdrDay.textContent      = day;
+  if(hdrVeg)      hdrVeg.textContent      = veg;
+  if(hdrNonveg)   hdrNonveg.textContent   = nonveg;
 
   const sg = document.getElementById('summary-grid');
   if(sg){
