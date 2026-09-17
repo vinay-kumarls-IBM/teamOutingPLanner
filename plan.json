@@ -1,14 +1,6 @@
 {
   "people": [
     {
-      "id": 1,
-      "name": "Kshitij Kaithal",
-      "loc": "Bellandur",
-      "travel": "Bike",
-      "stay": "Day",
-      "food": "Veg"
-    },
-    {
       "id": 2,
       "name": "Saurabh Kumar",
       "loc": "BTM",
@@ -125,14 +117,6 @@
       "name": "Rakesh Mandala",
       "loc": "Kundalahalli",
       "travel": "Bike",
-      "stay": "Overnight",
-      "food": "Non Veg"
-    },
-    {
-      "id": 17,
-      "name": "Vikneshwar Anandan",
-      "loc": "Munnekollal",
-      "travel": "Carpool",
       "stay": "Overnight",
       "food": "Non Veg"
     },
@@ -265,14 +249,6 @@
       "food": "Non Veg"
     },
     {
-      "id": 36,
-      "name": "Naveen Shyam Reuban",
-      "loc": "Office",
-      "travel": "Bike",
-      "stay": "Overnight",
-      "food": "Non Veg"
-    },
-    {
       "id": 37,
       "name": "Peermahamad",
       "loc": "Office",
@@ -365,7 +341,6 @@
     "car1": [
       7,
       15,
-      17,
       37,
       12
     ],
@@ -404,8 +379,7 @@
   "room": {
     "premium1": [
       13,
-      27,
-      36
+      27
     ],
     "premium2": [
       34,
@@ -418,7 +392,6 @@
       22
     ],
     "premium4": [
-      17,
       28,
       37
     ],
@@ -451,10 +424,9 @@
       32
     ],
     "daytrip-pool": [
-      1,
       31
     ],
     "room-unassigned": []
   },
-  "savedAt": "2026-09-17T10:40:19.503Z"
+  "savedAt": "2026-09-17T16:58:03.046Z"
 }
