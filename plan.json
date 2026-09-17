@@ -49,14 +49,6 @@
       "food": "Non Veg"
     },
     {
-      "id": 8,
-      "name": "Baijnath Kumar",
-      "loc": "Balagere Road",
-      "travel": "Carpool",
-      "stay": "Overnight",
-      "food": "Non Veg"
-    },
-    {
       "id": 9,
       "name": "Giridhar Panuganti",
       "loc": "HSR Layout",
@@ -420,5 +412,5 @@
     ],
     "room-unassigned": []
   },
-  "savedAt": "2026-09-17T17:12:30.523Z"
+  "savedAt": "2026-09-17T17:21:25.119Z"
 }
