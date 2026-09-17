@@ -207,18 +207,8 @@ body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:13px;ba
 
 <!-- SUMMARY -->
 <div id="tab-summary" class="panel">
-  <div class="summary-grid">
-    <div class="s-card blue"><div class="s-val">35</div><div class="s-lbl">Total Attendees</div></div>
-    <div class="s-card green"><div class="s-val">30</div><div class="s-lbl">Overnight</div></div>
-    <div class="s-card orange"><div class="s-val">5</div><div class="s-lbl">Day Trip</div></div>
-    <div class="s-card purple"><div class="s-val">9</div><div class="s-lbl">🥗 Veg</div></div>
-    <div class="s-card red"><div class="s-val">26</div><div class="s-lbl">🍗 Non-Veg</div></div>
-    <div class="s-card blue"><div class="s-val">6</div><div class="s-lbl">Cars (rides)</div></div>
-    <div class="s-card orange"><div class="s-val">10</div><div class="s-lbl">Bike Riders</div></div>
-    <div class="s-card green"><div class="s-val">19</div><div class="s-lbl">Need Carpool</div></div>
-    <div class="s-card purple"><div class="s-val">21</div><div class="s-lbl">Car Seats Available</div></div>
-  </div>
-  <div class="section-head"><h2>👥 All 35 Team Members</h2></div>
+  <div class="summary-grid" id="summary-grid"></div>
+  <div class="section-head"><h2 id="summary-table-title">👥 All Team Members</h2></div>
   <div class="people-table">
     <table><thead><tr><th>#</th><th>Name</th><th>Location</th><th>Travel</th><th>Stay</th><th>Food</th></tr></thead>
     <tbody id="people-tbody"></tbody></table>
@@ -377,6 +367,33 @@ function renderRooms(){
 }
 
 function renderSummaryTable(){
+  const total = PEOPLE.length;
+  const overnight = PEOPLE.filter(p=>p.stay==='Overnight').length;
+  const day = PEOPLE.filter(p=>p.stay==='Day').length;
+  const veg = PEOPLE.filter(p=>p.food==='Veg').length;
+  const nonveg = PEOPLE.filter(p=>p.food==='Non Veg').length;
+  const carsCount = CARS.length;
+  const bikers = PEOPLE.filter(p=>p.travel==='Bike').length;
+  const carpool = PEOPLE.filter(p=>p.travel==='Carpool').length;
+  const totalSeats = CARS.reduce((sum,c)=>sum+(c.totalSeats||0),0);
+
+  const sg = document.getElementById('summary-grid');
+  if(sg){
+    sg.innerHTML = `
+      <div class="s-card blue"><div class="s-val">${total}</div><div class="s-lbl">Total Attendees</div></div>
+      <div class="s-card green"><div class="s-val">${overnight}</div><div class="s-lbl">Overnight</div></div>
+      <div class="s-card orange"><div class="s-val">${day}</div><div class="s-lbl">Day Trip</div></div>
+      <div class="s-card purple"><div class="s-val">${veg}</div><div class="s-lbl">🥗 Veg</div></div>
+      <div class="s-card red"><div class="s-val">${nonveg}</div><div class="s-lbl">🍗 Non-Veg</div></div>
+      <div class="s-card blue"><div class="s-val">${carsCount}</div><div class="s-lbl">Cars (rides)</div></div>
+      <div class="s-card orange"><div class="s-val">${bikers}</div><div class="s-lbl">Bike Riders</div></div>
+      <div class="s-card green"><div class="s-val">${carpool}</div><div class="s-lbl">Need Carpool</div></div>
+      <div class="s-card purple"><div class="s-val">${totalSeats}</div><div class="s-lbl">Passenger Seats</div></div>
+    `;
+  }
+  const stt = document.getElementById('summary-table-title');
+  if(stt) stt.textContent = `👥 All ${total} Team Members`;
+
   const tb=document.getElementById('people-tbody'); tb.innerHTML='';
   const emoji={Bike:'🏍️','Car (Driver)':'🚗','Car (own)':'🚗',Carpool:'🤝'};
   for(const p of PEOPLE){
